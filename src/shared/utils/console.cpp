@@ -12,20 +12,18 @@
   va_end(arguments); \
   free((void *) fmt) \
 
-namespace console {
-    using namespace color;
+using namespace color;
 
-    inline void log(const char *const format, ...) {
-      printfln(str("%s%s%s.%s\n", Reset, format, Yellow, Reset));
-    }
-    inline void info(const char *const format, ...) {
-      printfln(str("%sInfo%s:%s %s%s.%s\n", Gray, Yellow, Gray, format, Yellow, Reset));
-    }
-    inline void error(const char *const format, ...) {
-      printfln(str("%sError%s:%s %s%s.%s\n", Red, Yellow, Reset, format, Yellow, Reset));
-    }
-    inline void event(const char *const format, ...) {
-      printfln(str("%sEvent%s:%s %s%s.%s\n", Green, Yellow, Reset, format, Yellow, Reset));
-    }
+void console::log(const char * format, ...) {
+  printfln(str("%s%s%s.%s\n", Reset, format, Yellow, Reset));
+}
+void console::info(const char * format, ...) {
+  printfln(str("%sInfo%s:%s %s%s.%s\n", Gray, Yellow, Gray, format, Yellow, Reset));
+}
+void console::error(const char * format, ...) {
+  printfln(str("%sError%s:%s %s%s.%s\n", Red, Yellow, Reset, format, Yellow, Reset));
+}
+void console::event(const char * format, ...) {
+  printfln(str("%sEvent%s:%s %s%s.%s\n", Green, Yellow, Reset, format, Yellow, Reset));
 }
 

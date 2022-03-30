@@ -1,8 +1,8 @@
 #pragma once
 
 namespace console {
-    inline void log(const char *format, ...);
-    inline void info(const char *format, ...);
-    inline void event(const char *format, ...);
-    inline void error(const char *format, ...);
+    extern void log(const char *format, ...);
+    extern void info(const char *format, ...);
+    extern void event(const char *format, ...);
+    extern void error(const char *format, ...);
 }

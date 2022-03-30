@@ -1,4 +1,12 @@
 #include <shared/globals.hpp>
+#include <shared/utils/common.hpp>
+
+i32 Rank;
+i32 Size;
+
+i32 Poets;
+i32 Volunteers;
+u8 Clock;
 
 bool is_poet(i32 rank) { return rank < Poets; }
 bool is_volunteer(i32 rank) { return rank < Poets + Volunteers; }
