@@ -18,12 +18,11 @@ void console::log(const char * format, ...) {
   printfln(str("%s%s%s.%s\n", Reset, format, Yellow, Reset));
 }
 void console::info(const char * format, ...) {
-  printfln(str("%sInfo%s:%s %s%s.%s\n", Gray, Yellow, Gray, format, Yellow, Reset));
+  printfln(str("%s%sInfo%s:%s %s%s.%s\n", Reset, Gray, Yellow, Gray, format, Yellow, Reset));
 }
 void console::error(const char * format, ...) {
-  printfln(str("%sError%s:%s %s%s.%s\n", Red, Yellow, Reset, format, Yellow, Reset));
+  printfln(str("%s%sError%s:%s %s%s.%s\n", Reset, Red, Yellow, Reset, format, Yellow, Reset));
 }
 void console::event(const char * format, ...) {
-  printfln(str("%sEvent%s:%s %s%s.%s\n", Green, Yellow, Reset, format, Yellow, Reset));
+  printfln(str("%s%sEvent%s:%s %s%s.%s\n", Reset, Green, Yellow, Reset, format, Yellow, Reset));
 }
-

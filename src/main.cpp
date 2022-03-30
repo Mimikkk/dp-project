@@ -5,5 +5,8 @@
 int main(int argc, char **argv) {
   initialize(argc, argv);
   console::log("Hello.., world!");
+  console::info("Hello.., world!");
+  console::error("Hello.., world!");
+  console::event("Hello.., world!");
   MPI_Finalize();
 }
