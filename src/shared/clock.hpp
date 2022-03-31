@@ -1,6 +1,5 @@
 #pragma once
 #include <shared/imports.hpp>
-#include <functional>
 
 namespace sharedtime {
     typedef u64 timestamp;

@@ -1,9 +1,12 @@
 #pragma once
+#include <functional>
 #include <cstdlib>
 #include <cstring>
-#include <cstdio>
 #include <cstdint>
 #include <cstdarg>
+#include <cstdarg>
+#include <cstdio>
+#include <memory>
 #include <mpi.h>
 
 typedef uint64_t u64;

@@ -2,10 +2,7 @@
 #include <shared/utils/console.hpp>
 #include <shared/utils/common.hpp>
 #include <shared/utils/color.hpp>
-#include <cstdlib>
-#include <cstdarg>
-#include <cstdio>
-#include "shared/clock.hpp"
+#include <shared/clock.hpp>
 
 namespace console {
     using namespace color;
