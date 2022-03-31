@@ -18,7 +18,7 @@ find_package(MPI REQUIRED)
 
 include_directories(${MPI_INCLUDE_PATH})
 
-add_executable(task ${SRC_DIR}/main.cpp ${SOURCES})
+add_executable(task ${SRC_DIR}/main.cpp ${SOURCES} src/shared/clock.hpp)
 target_include_directories(task PRIVATE ${SRC_DIR})
 target_link_libraries(task PUBLIC ${MPI_LIBRARIES})
 

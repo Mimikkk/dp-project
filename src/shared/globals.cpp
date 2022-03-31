@@ -6,18 +6,10 @@ i32 Size;
 
 i32 Poets;
 i32 Volunteers;
-u8 Clock;
 
 bool is_poet(i32 rank) { return rank < Poets; }
 bool is_volunteer(i32 rank) { return rank < Poets + Volunteers; }
 
-void tick() {
-  if (Clock == UINT8_MAX) {
-    Clock = 0;
-  } else {
-    Clock++;
-  }
-}
 void finalize(i32 errorcode) {
   if (errorcode != 0) {
     printf("Error code: %d\n", errorcode);
