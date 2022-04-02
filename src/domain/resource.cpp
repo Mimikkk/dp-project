@@ -4,7 +4,7 @@
 
 using namespace resource;
 
-extern Resource resource::random() {
+extern fn resource::random() -> Resource {
   static std::random_device device;
   static std::mt19937 generator(device());
   static std::uniform_int_distribution<i32> uniform(Resource::Alcohol, Resource::Nothing);

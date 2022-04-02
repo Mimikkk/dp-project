@@ -2,7 +2,7 @@
 #include <shared/utils/console.hpp>
 #include "shared/clock.hpp"
 
-int main(int argc, char **argv) {
+fn main(int argc, char **argv) -> int {
   using namespace process;
 
   initialize(argc, argv);

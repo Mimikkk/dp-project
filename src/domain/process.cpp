@@ -5,16 +5,15 @@
 #include <domain/poet.hpp>
 
 namespace process {
-
-    bool is_poet(i32 rank) {
+    fn is_poet(i32 rank) -> bool {
       return rank < poet::Count;
     }
 
-    bool is_volunteer(i32 rank) {
+    fn is_volunteer(i32 rank) -> bool {
       return rank < poet::Count + volunteer::Count;
     }
 
-    void finalize(ExitCode code) {
+    fn finalize(ExitCode code) -> void {
       if (code != Success) {
         console::error("Error code: %d\n", code);
         MPI_Abort(MPI_COMM_WORLD, code);
@@ -24,7 +23,7 @@ namespace process {
       exit(code);
     }
 
-    void initialize(int argc, char **argv) {
+    fn initialize(int argc, char **argv) -> void {
       MPI_Init(&argc, &argv);
       MPI_Comm_rank(MPI_COMM_WORLD, &Rank);
       MPI_Comm_size(MPI_COMM_WORLD, &Size);

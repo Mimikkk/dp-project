@@ -5,20 +5,18 @@ namespace sharedtime {
     typedef usize timestamp;
 
     namespace {
-        inline void handle_overflow() {}
+        inline fn handle_overflow() {}
         inline timestamp stamp = 0;
-        
-        inline timestamp tick() {
+
+        inline fn tick() -> timestamp {
           if (++stamp == 0) handle_overflow();
           return stamp;
         }
     }
 
-    inline timestamp get() {
-        return stamp;
-    }
-    
-    inline void run(const std::function<void(timestamp)> &command) {
+    inline fn get() -> timestamp { return stamp; }
+
+    inline fn run(const std::function<void(timestamp)> &command) {
       command(tick());
     }
 }

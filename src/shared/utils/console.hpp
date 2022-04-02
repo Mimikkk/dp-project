@@ -8,8 +8,8 @@ namespace console {
     using namespace color;
 
     namespace {
-        #define printfln(fmt) \
-          do {                \
+        #define printfln(fmt)               \
+          do {                              \
           va_list arguments;                \
           va_start(arguments, format);      \
           vfprintf(stdout, fmt, arguments); \
@@ -17,7 +17,7 @@ namespace console {
           } while (false)
 
         fn name() -> uptr<char> {
-          return str("%sAn %s%-9s %sranked %s%03d",
+          return str("%sA %s%-9s %sranked %s%03d",
                      Gray, Blue, process::is_poet(process::Rank) ? "poet" : "volunteer", Gray, Blue, process::Rank);
         }
 

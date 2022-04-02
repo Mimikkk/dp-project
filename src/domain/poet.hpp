@@ -9,7 +9,7 @@ namespace poet {
     inline optional<Resource> LastResource;
 
 
-    inline Resource pick_resource() {
+    inline fn pick_resource() -> Resource {
       Resource resource;
       while ((resource = resource::random()) == LastResource);
       LastResource = resource;

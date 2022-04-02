@@ -6,7 +6,7 @@
 #define loop for(;;)
 #define fn auto
 
-inline uptr<char> str(const char *format, ...) {
+inline fn str(const char *format, ...) {
   va_list arguments, size_check;
   va_start(arguments, format);
   va_copy(size_check, arguments);
