@@ -7,6 +7,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <memory>
+#include <random>
 #include <mpi.h>
 
 using std::optional;
