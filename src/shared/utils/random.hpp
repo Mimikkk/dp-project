@@ -4,7 +4,7 @@
 
 namespace rnd {
     namespace {
-        inline fn generator() -> std::mt19937 {
+        inline std::mt19937 generator() {
           static std::random_device device;
           static std::mt19937 generator(device());
           return generator;
@@ -15,7 +15,8 @@ namespace rnd {
       return std::uniform_int_distribution<i32>(min, max);
     }
 
-    inline fn use(auto distribution) {
-      return distribution(generator);
+    inline fn use(std::uniform_int_distribution<i32> distribution) {
+      static let gen = generator();
+      return distribution.operator()(gen);
     }
 }

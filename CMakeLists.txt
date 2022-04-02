@@ -13,6 +13,7 @@ set(EXECUTABLE_OUTPUT_PATH ${BIN_DIR})
 # All needed source files
 file(GLOB_RECURSE SOURCES ${SRC_DIR}/*.hpp ${SRC_DIR}/*.cpp)
 message(STATUS "Found ${SOURCES} source files")
+add_definitions("-fconcepts")
 
 find_package(MPI REQUIRED)
 
