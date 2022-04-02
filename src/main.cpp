@@ -1,6 +1,6 @@
 #include <domain/process.hpp>
 #include <shared/utils/console.hpp>
-#include "shared/clock.hpp"
+#include "shared/sharedtime.hpp"
 
 fn main(int argc, char **argv) -> int {
   using namespace process;
