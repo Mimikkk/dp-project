@@ -1,8 +1,9 @@
 #include <domain/process.hpp>
 #include <shared/utils/console.hpp>
 #include "shared/sharedtime.hpp"
+#include "domain/poet.hpp"
 
-fn main(int argc, char **argv) -> int {
+fn main(i32 argc, char **argv) -> i32 {
   using namespace process;
 
   initialize(argc, argv);
@@ -14,7 +15,7 @@ fn main(int argc, char **argv) -> int {
 
   sharedtime::run([](let time) {
       console::info("I want to create a club!");
-      console::log("Time: %lu", time);
+      console::info("I'll pick %d %d %d", poet::pick_resource(), poet::pick_resource(), poet::pick_resource());
   });
 
   finalize(ExitCode::Success);

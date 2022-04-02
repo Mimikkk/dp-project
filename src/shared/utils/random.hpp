@@ -3,12 +3,10 @@
 #include <domain/resource.hpp>
 
 namespace rnd {
-    namespace {
-        inline std::mt19937 generator() {
-          static std::random_device device;
-          static std::mt19937 generator(device());
-          return generator;
-        }
+    inline fn generator() -> std::mt19937 {
+      static std::random_device device;
+      static std::mt19937 gen(device());
+      return gen;
     }
 
     inline fn create_uniform(i32 min, i32 max) {
@@ -16,7 +14,7 @@ namespace rnd {
     }
 
     inline fn use(std::uniform_int_distribution<i32> distribution) {
-      static let gen = generator();
-      return distribution.operator()(gen);
+      static var gen = generator();
+      return distribution(gen);
     }
 }
