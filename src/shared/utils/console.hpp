@@ -16,7 +16,8 @@ namespace console {
           free((void *) (fmt))
 
         char *stamp() {
-          return str("At %s%lu%s", Magenta, sharedtime::get(), Reset);
+          return str("%s %03d%s : %sAt %s%lu%s",
+                     Magenta, process::Rank, Yellow, Reset, Magenta, sharedtime::get(), Reset);
         }
     }
 

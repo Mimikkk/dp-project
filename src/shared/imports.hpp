@@ -9,6 +9,11 @@
 #include <memory>
 #include <mpi.h>
 
+using std::optional;
+using std::unique_ptr;
+using std::shared_ptr;
+using std::move;
+
 typedef size_t usize;
 typedef uint64_t u64;
 typedef uint32_t u32;

@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   console::error("Hello.., world!");
   console::event("Hello.., world!");
 
-  sharedtime::run([](var time) {
+  sharedtime::run([](let time) {
       console::log("Time: %lu", time);
   });
 
