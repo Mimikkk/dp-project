@@ -9,7 +9,7 @@ namespace process {
     inline i32 Size;
 
     fn finalize(ExitCode code) -> void;
-    fn initialize(int argc, char **argv) -> void;
+    fn initialize(i32 argc, char **argv) -> void;
 
     extern fn is_poet(i32 rank) -> bool;
     extern fn is_volunteer(i32 rank) -> bool;

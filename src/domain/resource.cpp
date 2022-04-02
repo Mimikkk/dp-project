@@ -4,6 +4,6 @@
 using namespace resource;
 
 extern Resource resource::random() {
-  static var uniform = rnd::create_uniform(Resource::Alcohol, Resource::Nothing);
+  static var uniform = rnd::create_i_uniform<u8>(Resource::Alcohol, Resource::Nothing);
   return static_cast<Resource>(rnd::use(uniform));
 }

@@ -30,16 +30,16 @@ namespace console {
         }
     }
 
-    inline fn log(const char *format, ...) {
-      printfln(str("Log   %s %s %s%s.%s\n", nfo().get(), Cyan, format, Yellow, Reset).get());
+    inline fn log(const char *format, ...)  {
+      printfln(str("Log   %s%s %s%s.%s\n", nfo().get(), Cyan, format, Yellow, Reset).get());
     }
     inline fn info(const char *format, ...) {
-      printfln(str("%sInfo  %s %s %s%s.%s\n", Gray, nfo().get(), Gray, format, Yellow, Reset).get());
+      printfln(str("%sInfo  %s%s %s%s.%s\n", Gray, nfo().get(), Gray, format, Yellow, Reset).get());
     }
     inline fn event(const char *format, ...) {
-      printfln(str("%sEvent %s %s %s%s.%s\n", Green, nfo().get(), Green, format, Yellow, Reset).get());
+      printfln(str("%sEvent %s%s %s%s.%s\n", Green, nfo().get(), Green, format, Yellow, Reset).get());
     }
     inline fn error(const char *format, ...) {
-      printfln(str("%sError %s %s %s%s.%s\n", Red, nfo().get(), Red, format, Yellow, Reset).get());
+      printfln(str("%sError %s%s %s%s.%s\n", Red, nfo().get(), Red, format, Yellow, Reset).get());
     }
 }

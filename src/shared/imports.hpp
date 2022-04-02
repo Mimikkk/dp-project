@@ -19,6 +19,9 @@ template <typename Tp>
 using sptr = std::shared_ptr<Tp>;
 using std::move;
 
+typedef double f64;
+typedef float f32;
+
 typedef size_t usize;
 typedef uint64_t u64;
 typedef uint32_t u32;
