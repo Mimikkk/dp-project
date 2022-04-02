@@ -2,6 +2,7 @@ all: build run-12-4
 
 build:
 	@echo "Building..."
+	cmake . ./cmake-build-debug/
 	$(MAKE) -C ./cmake-build-debug/
 	@echo "Built!."
 
