@@ -10,8 +10,12 @@
 #include <mpi.h>
 
 using std::optional;
-using std::unique_ptr;
-using std::shared_ptr;
+
+template <typename Tp, typename Dp = std::default_delete<Tp>>
+using uptr = std::unique_ptr<Tp, Dp>;
+
+template <typename Tp>
+using sptr = std::shared_ptr<Tp>;
 using std::move;
 
 typedef size_t usize;
