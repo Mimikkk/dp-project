@@ -1,9 +1,10 @@
-#include <shared/imports.hpp>
-#include <shared/globals.hpp>
+#include <domain/process.hpp>
 #include <shared/utils/console.hpp>
 #include "shared/clock.hpp"
 
 int main(int argc, char **argv) {
+  using namespace process;
+
   initialize(argc, argv);
 
   console::log("Hello.., world!");
@@ -12,8 +13,8 @@ int main(int argc, char **argv) {
   console::event("Hello.., world!");
 
   sharedtime::run([](var time) {
-    console::log("Time: %lu", time);
+      console::log("Time: %lu", time);
   });
 
-  MPI_Finalize();
+  finalize(ExitCode::Success);
 }
