@@ -13,6 +13,7 @@ fn main(int argc, char **argv) -> int {
   console::event("Hello.., world!");
 
   sharedtime::run([](let time) {
+      console::info("I want to create a club!");
       console::log("Time: %lu", time);
   });
 
