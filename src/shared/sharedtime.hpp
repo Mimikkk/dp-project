@@ -17,6 +17,10 @@ namespace sharedtime {
     inline fn get() -> timestamp { return stamp; }
 
     inline fn run(const std::function<void(timestamp)> &command) {
+      while (process::Cooldown != 0) {
+        --process::Cooldown;
+        tick();
+      }
       command(tick());
     }
 }

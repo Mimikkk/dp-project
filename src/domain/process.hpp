@@ -7,6 +7,8 @@ namespace process {
 
     inline i32 Rank;
     inline i32 Size;
+    inline i32 Cooldown;
+    inline MPI_Status Status;
 
     fn finalize(ExitCode code) -> void;
     fn initialize(i32 argc, char **argv) -> void;

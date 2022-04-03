@@ -1,20 +1,13 @@
+#include <domain/volunteer.hpp>
 #include <domain/process.hpp>
-#include <shared/utils/console.hpp>
-#include "shared/sharedtime.hpp"
-#include <shared/utils/random.hpp>
+#include <domain/poet.hpp>
 
+using namespace process;
 fn main(i32 argc, char **argv) -> i32 {
-  using namespace process;
-
   initialize(argc, argv);
 
-  sharedtime::run([&](let time) {
-    if (rnd::boolean()) {
-      console::info("I want to create a libacja!");
-    } else {
-      console::info("I'll wont create a libacja. its dumb");
-    }
-  });
+  if (is_poet(Rank)) poet::logic();
+  else volunteer::logic();
 
-  finalize(ExitCode::Success);
+  finalize(Success);
 }
