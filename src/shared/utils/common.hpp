@@ -1,11 +1,11 @@
 #pragma once
 #include <shared/imports.hpp>
+#include <stdnoreturn.h>
 
 #define var auto
 #define let const var
 #define loop for(;;)
 #define fn auto
-#define noreturn _Noreturn
 
 inline fn str(const char *format, ...) {
   va_list arguments, size_check;

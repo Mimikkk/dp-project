@@ -16,8 +16,8 @@ namespace process {
   extern fn is_poet(i32 rank) -> bool;
   extern fn is_volunteer(i32 rank) -> bool;
   extern fn cooldown() -> void;
-  
-  noreturn fn run(fn logic) {
+
+  [[noreturn]] inline fn run(fn logic) {
     loop {
       if (Cooldown > 0) cooldown();
       logic();
