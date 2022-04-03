@@ -1,20 +1,13 @@
-#include <shared/imports.hpp>
-#include <domain/process.hpp>
-#include <shared/utils/console.hpp>
-#include <domain/volunteer.hpp>
-#include <domain/poet.hpp>
+#include "imports.hpp"
+#include "process.hpp"
+#include "shared/utils/console.hpp"
+#include "domain/volunteer.hpp"
+#include "domain/poet.hpp"
 
 namespace process {
-  fn is_poet(i32 rank) -> bool {
-    return rank < poet::Count;
-  }
-  fn is_volunteer(i32 rank) -> bool {
-    return rank < poet::Count + volunteer::Count;
-  }
-  fn cooldown() -> void {
-    while (--Cooldown) sharedtime::tick();
-  }
-
+  fn is_poet(i32 rank) -> bool { return rank < poet::Count; }
+  fn is_volunteer(i32 rank) -> bool { return rank < poet::Count + volunteer::Count; }
+  
   fn initialize(int argc, char **argv) -> void {
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &Rank);
@@ -46,6 +39,7 @@ namespace process {
       finalize(Failure);
     }
   }
+
   fn finalize(ExitCode code) -> void {
     if (code != Success) {
       console::error("Error code: %d\n", code);

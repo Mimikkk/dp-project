@@ -9,13 +9,14 @@ namespace poet {
   inline i32 Count;
   inline i32 Cooldown;
   inline optional<Resource> LastResource;
+  inline vector<usize> Clubs;
 
+  inline fn cooldown() { while (Cooldown > 0) process::run([]() { --Cooldown; }); }
 
-  inline fn rest() {
-    Cooldown = rnd::integer(0, 20);
-  }
+  inline fn rest() { Cooldown = rnd::integer(0, 20); }
 
   inline fn logic() {
+    rest();
   }
 
   inline fn pick_resource() -> Resource {
