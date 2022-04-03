@@ -1,7 +1,6 @@
 #pragma once
 #include <shared/imports.hpp>
 #include <shared/utils/common.hpp>
-#include <shared/sharedtime.hpp>
 
 namespace process {
   enum ExitCode { Success = 0, Failure = 1 };
@@ -16,28 +15,12 @@ namespace process {
 
   extern fn is_poet(i32 rank) -> bool;
   extern fn is_volunteer(i32 rank) -> bool;
-
-
-  inline fn cooldown() {
-    while (process::Cooldown != 0) {
-      --process::Cooldown;
-      sharedtime::tick();
+  extern fn cooldown() -> void;
+  
+  noreturn fn run(fn logic) {
+    loop {
+      if (Cooldown > 0) cooldown();
+      logic();
     }
-  }
-
-  inline fn receive(auto &command) {
-    cooldown();
-    sharedtime::run([](let) {
-      var time = 0lu;
-      MPI_Recv(&time, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &Status);
-    });
-  }
-
-  inline fn send() {
-    cooldown();
-    sharedtime::run([](let time
-    ) {
-      MPI_Send(&time, 1, MPI_UNSIGNED_LONG, Status.MPI_SOURCE, Status.MPI_TAG, MPI_COMM_WORLD);
-    });
   }
 }

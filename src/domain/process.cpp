@@ -8,19 +8,11 @@ namespace process {
   fn is_poet(i32 rank) -> bool {
     return rank < poet::Count;
   }
-
   fn is_volunteer(i32 rank) -> bool {
     return rank < poet::Count + volunteer::Count;
   }
-
-  fn finalize(ExitCode code) -> void {
-    if (code != Success) {
-      console::error("Error code: %d\n", code);
-      MPI_Abort(MPI_COMM_WORLD, code);
-    }
-
-    MPI_Finalize();
-    exit(code);
+  fn cooldown() -> void {
+    while (--Cooldown) sharedtime::tick();
   }
 
   fn initialize(int argc, char **argv) -> void {
@@ -53,6 +45,15 @@ namespace process {
       console::error("Volunteer Count must be a positive integer.\n");
       finalize(Failure);
     }
+  }
+  fn finalize(ExitCode code) -> void {
+    if (code != Success) {
+      console::error("Error code: %d\n", code);
+      MPI_Abort(MPI_COMM_WORLD, code);
+    }
+
+    MPI_Finalize();
+    exit(code);
   }
 }
 
