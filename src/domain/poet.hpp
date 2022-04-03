@@ -4,24 +4,24 @@
 #include "shared/utils/random.hpp"
 
 namespace poet {
-    using resource::Resource;
+  using resource::Resource;
 
-    inline i32 Count;
-    inline i32 Cooldown;
-    inline optional<Resource> LastResource;
+  inline i32 Count;
+  inline i32 Cooldown;
+  inline optional<Resource> LastResource;
 
 
-    inline fn rest() {
-      Cooldown = rnd::integer(0, 20);
-    }
+  inline fn rest() {
+    Cooldown = rnd::integer(0, 20);
+  }
 
-    inline fn logic() {
-    }
+  inline fn logic() {
+  }
 
-    inline fn pick_resource() -> Resource {
-      Resource resource;
-      while ((resource = resource::random()) == LastResource);
-      LastResource = resource;
-      return resource;
-    }
+  inline fn pick_resource() -> Resource {
+    Resource resource;
+    while ((resource = resource::random()) == LastResource);
+    LastResource = resource;
+    return resource;
+  }
 }

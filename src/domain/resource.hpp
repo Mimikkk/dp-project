@@ -2,7 +2,7 @@
 #include <shared/utils/common.hpp>
 
 namespace resource {
-    enum Resource { Alcohol, Snack, Nothing };
+  enum Resource { Alcohol, Snack, Nothing };
 
-    extern fn random() -> Resource;
+  extern fn random() -> Resource;
 }
