@@ -10,4 +10,5 @@ namespace color {
   inline const char *const Yellow = "\e[38;5;3m";
   inline const char *const Green = "\e[38;5;2m";
   inline const char *const Red = "\e[38;5;1m";
+  inline fn dynamic(i32 code) { return str("\e[38;5;%dm", code); }
 }

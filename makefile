@@ -1,10 +1,21 @@
-all: build run-12-4
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+SOURCES=$(call rwildcard, src/, *.cpp)
+HEADERS=$(call rwildcard, src/, *.hpp)
+FLAGS=-g -std=gnu++2a -fconcepts
 
-build:
-	@echo "Building..."
-	cmake . ./cmake-build-debug/
-	$(MAKE) -C ./cmake-build-debug/
-	@echo "Built!."
+all: main run-1-1
+
+main: $(SOURCES) $(HEADERS)
+	mpicxx $(SOURCES) $(FLAGS) -o bin/application
+
+clear: clean
+
+clean:
+	rm main a.out
+
+run-1-1:
+	@echo "Running with 1 poet and 1 volunteer."
+	@mpirun -np 2 -oversubscribe ./bin/task 1 1
 
 run-12-4:
 	@echo "Running with 12 poets and 4 volunteers."

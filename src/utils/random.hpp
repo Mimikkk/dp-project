@@ -1,6 +1,5 @@
 #pragma once
-#include <shared/imports.hpp>
-#include <domain/resource.hpp>
+#include "../imports.hpp"
 
 namespace rnd {
   namespace {

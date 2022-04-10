@@ -1,8 +1,8 @@
 #pragma once
-#include <shared/utils/console.hpp>
-#include <shared/utils/common.hpp>
-#include <shared/utils/color.hpp>
-#include <shared/sharedtime.hpp>
+#include "../imports.hpp"
+#include "../main.hpp"
+#include "color.hpp"
+#include "../domain/definitions/packet.hpp"
 
 namespace console {
   using namespace color;
@@ -16,16 +16,15 @@ namespace console {
       va_end(arguments);                \
       } while (false)
 
-    fn name() -> uptr<char> {
-      return str("%sA %s%-9s %sranked %s%03d",
-                 Gray, Blue, process::is_poet(process::Rank) ? "poet" : "volunteer", Gray, Blue, process::Rank);
+    fn name() {
+      return str("%sRank %s%03d", Gray, dynamic((Rank + 1) % Size).get(), Rank);
     }
 
-    fn time() -> uptr<char> {
-      return str("%sAt %s%016lu", Gray, Blue, sharedtime::get());
+    fn time() {
+      return str("%sAt %s%016lu", Gray, Blue, packet::timestamp());
     }
 
-    fn nfo() -> uptr<char> {
+    fn nfo() {
       return str("%s: %s %s: %s %s:", Yellow, name().get(), Yellow, time().get(), Yellow);
     }
   }
