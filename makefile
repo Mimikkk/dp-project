@@ -15,8 +15,12 @@ clean:
 
 run-1-1:
 	@echo "Running with 1 poet and 1 volunteer."
-	@mpirun -np 2 -oversubscribe ./bin/task 1 1
+	@mpirun -np 2 -oversubscribe ./bin/application 1 1
+
+run-4-1:
+	@echo "Running with 4 poet and 1 volunteer."
+	@mpirun -np 5 -oversubscribe ./bin/application 4 1
 
 run-12-4:
 	@echo "Running with 12 poets and 4 volunteers."
-	@mpirun -np 16 -oversubscribe ./bin/task 12 4
+	@mpirun -np 16 -oversubscribe ./bin/application 12 4

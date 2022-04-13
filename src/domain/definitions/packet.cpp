@@ -1,7 +1,6 @@
 #include "packet.hpp"
-#include "../../main.hpp"
-#include "../../utils/common.hpp"
 #include "timestamp.hpp"
+#include "../process.hpp"
 
 MPI_Datatype mpi_packet_t;
 
@@ -11,7 +10,7 @@ namespace packet {
   }
 
   fn send(Packet *packet, i32 destination, i32 tag) -> void {
-    packet->source = Rank;
+    packet->source = process::Rank;
     packet->timestamp = timestamp::tick();
     MPI_Send(packet, 1, mpi_packet_t, destination, tag, MPI_COMM_WORLD);
   }

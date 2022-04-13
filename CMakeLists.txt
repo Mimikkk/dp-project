@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(project CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 # Source directories and files
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
