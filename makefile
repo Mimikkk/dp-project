@@ -3,24 +3,29 @@ SOURCES=$(call rwildcard, src/, *.cpp)
 HEADERS=$(call rwildcard, src/, *.hpp)
 FLAGS=-g -std=gnu++2a -fconcepts
 
-all: main run-1-1
+all: build run-1-1
 
-main: $(SOURCES) $(HEADERS)
-	mpicxx $(SOURCES) $(FLAGS) -o bin/application
+build: $(SOURCES) $(HEADERS)
+	@echo "Building..."
+	@mkdir -p bin/
+	@mpicxx $(SOURCES) $(FLAGS) -o bin/application
+	@echo "Build success!"
 
-clear: clean
+clear:
+	@echo "Clearing..."
+	@rm -rf ./bin
+	@echo "Cleared!"
 
-clean:
-	rm main a.out
+run:
+	@echo "Running application with $(PC) poet/s $(VC) volunteer/s"
+	@echo "Running with $$(( $(PC) + $(VC) )) process/es"
+	mpirun -np $$(( $(PC) + $(VC) )) -oversubscribe bin/application $(PC) $(VC)
 
 run-1-1:
-	@echo "Running with 1 poet and 1 volunteer."
-	@mpirun -np 2 -oversubscribe ./bin/application 1 1
+	@make run PC=1 VC=1
 
 run-4-1:
-	@echo "Running with 4 poet and 1 volunteer."
-	@mpirun -np 5 -oversubscribe ./bin/application 4 1
+	@make run PC=4 VC=1
 
 run-12-4:
-	@echo "Running with 12 poets and 4 volunteers."
-	@mpirun -np 16 -oversubscribe ./bin/application 12 4
+	@make run PC=12 VC=4
