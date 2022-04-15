@@ -18,9 +18,9 @@ namespace volunteer {
         case state::Finish:
           console::event("Kończę prace naura");
           return pointer;
-        case state::Cleaning:
+        case state::CleaningRoom:
           console::event("To ja będę sprzątał");
-          send(volunteer::action::RoomCleaning, poet);
+          send(volunteer::action::CleanRoom, poet);
           process::sleep(rnd::use(sleeps));
 
           state::change(state::Idle);
@@ -31,9 +31,9 @@ namespace volunteer {
           console::info("Otrzymałem informację o sprzątaniu!");
 
           switch (packet.tag) {
-            case volunteer::action::RoomCleaning:
+            case volunteer::action::CleanRoom:
               poet = packet.data;
-              state::change(state::Cleaning);
+              state::change(state::CleaningRoom);
               break;
             case volunteer::action::PickANumber:
               console::log("Losuję liczbe...");
@@ -58,7 +58,7 @@ namespace volunteer {
               }
 
               console::log("Najkrótszy kijek Wylosował %03d o wartości %03d", straw.source, straw.data);
-              send(volunteer::action::RoomCleaning, straw.source, Packet(poet));
+              send(volunteer::action::CleanRoom, straw.source, Packet(poet));
               break;
           }
       }

@@ -13,7 +13,7 @@ namespace poet {
       packet::send(action::RequestRoomService, random_volunteer());
 
       console::event("Oczekuję informacji, że bedzie sprzątane...");
-      packet::receive(volunteer::action::RoomCleaning);
+      packet::receive(volunteer::action::CleanRoom);
       console::event("Będzie sprzatane, mogę kończyć!");
     };
   }
