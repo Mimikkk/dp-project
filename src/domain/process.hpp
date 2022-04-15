@@ -13,4 +13,7 @@ namespace process {
 
   inline fn is_volunteer(i32 rank) { return rank >= Poets and rank < Volunteers; }
   inline fn is_poet(i32 rank) { return rank < Poets; }
+  inline fn sleep(f64 seconds) {
+    std::this_thread::sleep_for(std::chrono::milliseconds((i64) (seconds * 1000.0 / 1)));
+  }
 }

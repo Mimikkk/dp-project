@@ -11,4 +11,5 @@
 #include <cstddef>
 #include <mpi.h>
 #include <pthread.h>
+#include <thread>
 #include "utils/common.hpp"
