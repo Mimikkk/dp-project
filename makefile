@@ -16,6 +16,8 @@ clear:
 	@rm -rf ./bin
 	@echo "Cleared!"
 
+start: build run
+
 run:
 	@echo "Running application with $(PC) poet/s $(VC) volunteer/s"
 	@echo "Running with $$(( $(PC) + $(VC) )) process/es"
