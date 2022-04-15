@@ -68,7 +68,7 @@ namespace process {
       exit(-1);
     }
 
-    check_thread_support(provided);
+    if (Rank == 0) check_thread_support(provided);
     srand(Rank);
   }
 

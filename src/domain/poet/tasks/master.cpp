@@ -2,14 +2,19 @@
 #include "../../../utils/console.hpp"
 #include "../action.hpp"
 #include "../state.hpp"
+#include "../../volunteer/action.hpp"
 
 namespace poet {
   fn master_task() -> void {
     using namespace process;
-    console::event("My name is Philip");
 
-    packet::send(action::RequestRoomService, random_volunteer());
+    loop {
+      console::event("Informuję o potrzebie sprzątania jakiegoś wolontariusza.");
+      packet::send(action::RequestRoomService, random_volunteer());
 
-    state::change(state::Finish);
+      console::event("Oczekuję informacji, że bedzie sprzątane...");
+      packet::receive(volunteer::action::RoomCleaning);
+      console::event("Będzie sprzatane, mogę kończyć!");
+    };
   }
 }

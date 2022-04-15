@@ -4,12 +4,16 @@
 namespace packet {
   extern fn timestamp() -> i32;
 
-  typedef struct packet_t {
-    i32 timestamp;
-    i32 source;
-    i32 data;
-    i32 tag;
-  } Packet;
+  class Packet {
+  public:
+    i32 timestamp{};
+    i32 source{};
+    i32 data{};
+    i32 tag{};
+
+    explicit Packet() = default;
+    explicit Packet(i32 data) : data(data) {}
+  };
 
   extern fn register_mpi_binding() -> void;
   extern fn free_mpi_binding() -> void;
