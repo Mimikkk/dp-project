@@ -8,7 +8,7 @@
 fn main(i32 argc, char **argv) -> i32 {
   using namespace process;
   initialize(argc, argv);
-  
+
   if (is_poet(Rank)) {
     using namespace poet;
     master_task();

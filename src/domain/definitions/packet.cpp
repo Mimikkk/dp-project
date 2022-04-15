@@ -9,15 +9,17 @@ namespace packet {
     return timestamp::clock.value();
   }
 
-  fn send(Packet *packet, i32 destination, i32 tag) -> void {
+  fn send(i32 tag, i32 destination, uptr<Packet> packet) -> void {
+    if (packet == nullptr) packet = std::make_unique<Packet>();
     packet->source = process::Rank;
     packet->timestamp = timestamp::tick();
-    MPI_Send(packet, 1, mpi_packet_t, destination, tag, MPI_COMM_WORLD);
+    
+    MPI_Send(packet.get(), 1, mpi_packet_t, destination, tag, MPI_COMM_WORLD);
   }
 
-  fn receive(i32 source, i32 tag, MPI_Status *status = nullptr) -> Packet {
+  fn receive(i32 tag, i32 source, uptr<MPI_Status> status) -> Packet {
     Packet packet;
-    MPI_Recv(&packet, 1, mpi_packet_t, source, tag, MPI_COMM_WORLD, status);
+    MPI_Recv(&packet, 1, mpi_packet_t, source, tag, MPI_COMM_WORLD, status.get());
     packet.timestamp = timestamp::max(packet.timestamp);
 
     return packet;

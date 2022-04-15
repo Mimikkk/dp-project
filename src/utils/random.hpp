@@ -2,12 +2,10 @@
 #include "../imports.hpp"
 
 namespace rnd {
-  namespace {
-    inline fn generator() -> std::mt19937 {
-      static std::random_device device;
-      static std::mt19937 gen(device());
-      return gen;
-    }
+  inline fn generator() -> std::mt19937 {
+    static std::random_device device;
+    static std::mt19937 gen(device());
+    return gen;
   }
 
   template<typename T = i32>
@@ -31,18 +29,15 @@ namespace rnd {
 
   template<typename T = f32>
   inline fn real(T min = 0.0, T max = 1.0) {
-    static var uniform = create_f_uniform<T>(min, max);
-    return use(uniform);
+    return use(create_f_uniform<T>(min, max));
   }
 
   template<typename T = i32>
   inline fn integer(T min = 0, T max = 1) {
-    static var uniform = create_i_uniform<T>(min, max);
-    return use(uniform);
+    return use(create_i_uniform<T>(min, max));
   }
 
   inline fn boolean(f64 limit = 0.5) {
-    static var uniform = create_b_uniform(limit);
-    return use(uniform);
+    return use(create_b_uniform(limit));
   }
 }

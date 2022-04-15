@@ -4,11 +4,12 @@
 #include "../domain/definitions/packet.hpp"
 
 namespace console {
-  using namespace color;
-  using namespace process;
-  using namespace packet;
+  namespace {
+    using namespace color;
+    using namespace process;
+    using namespace packet;
 
-  #define printfln(fmt)               \
+    #define printfln(fmt)               \
     do {                              \
     va_list arguments;                \
     va_start(arguments, format);      \
@@ -16,17 +17,18 @@ namespace console {
     va_end(arguments);                \
     } while (false)
 
-  fn name() {
-    let job = is_poet(Rank) ? str("%s%-9s", Silver, "Poet") : str("%s%s", Magenta, "Volunteer");
-    return str("%sRank %s %s%03d", Gray, job.get(), dynamic((Rank + 1) % Size).get(), Rank);
-  }
+    fn name() {
+      let job = is_poet(Rank) ? str("%s%-9s", Silver, "Poet") : str("%s%s", Magenta, "Volunteer");
+      return str("%sRank %s %s%03d", Gray, job.get(), dynamic((Rank + 1) % Size).get(), Rank);
+    }
 
-  fn time() {
-    return str("%sAt %s%08lu", Gray, Blue, timestamp());
-  }
+    fn time() {
+      return str("%sAt %s%08lu", Gray, Blue, timestamp());
+    }
 
-  fn nfo() {
-    return str("%s: %s %s: %s %s:", Yellow, name().get(), Yellow, time().get(), Yellow);
+    fn nfo() {
+      return str("%s: %s %s: %s %s:", Yellow, name().get(), Yellow, time().get(), Yellow);
+    }
   }
 
   fn log(const char *format, ...) -> void {

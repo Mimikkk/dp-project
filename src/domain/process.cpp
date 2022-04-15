@@ -49,6 +49,12 @@ namespace process {
       Poets = (i32) strtol(argv[1], nullptr, 10);
       Volunteers = (i32) strtol(argv[2], nullptr, 10);
 
+      if (Poets < 0) {
+        throw std::domain_error("Liczba poetów powinna być więszka od zera");
+      }
+      if (Volunteers < 0) {
+        throw std::domain_error("Liczba wolontariuszy powinna być więszka od zera");
+      }
       if (Poets + Volunteers != Size) {
         throw std::domain_error("Liczba procesów musi być równa sumie Poetów i Wolontariuszy");
       }

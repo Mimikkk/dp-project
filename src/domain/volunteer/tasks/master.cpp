@@ -6,7 +6,7 @@ namespace volunteer {
   fn master_task() -> void {
     console::event("wrr gdzie sprzątanko...?");
     process::sleep(0.5);
-    console::event("Zmieniam stan na koniec");
-    state::change(state::Finish);
+    console::event("Wysłałem coś");
+    packet::send(100, process::random_volunteer());
   }
 }
