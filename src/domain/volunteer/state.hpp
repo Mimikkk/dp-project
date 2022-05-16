@@ -2,7 +2,7 @@
 #include "../../imports.hpp"
 
 namespace volunteer::state {
-  enum State { Idle, Finish, CleaningRoom };
+  enum State { Idle };
 
   extern fn get() -> State;
   extern fn change(State next) -> void;

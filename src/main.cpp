@@ -11,8 +11,8 @@ fn main(i32 argc, char **argv) -> i32 {
 
   if (is_poet(Rank)) {
     using namespace poet;
-    master_task();
     pthread_create(&communication_thread, nullptr, communication_task, nullptr);
+    master_task();
   } else {
     using namespace volunteer;
     pthread_create(&communication_thread, nullptr, communication_task, nullptr);
