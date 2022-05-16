@@ -2,5 +2,5 @@
 #include "../../imports.hpp"
 
 namespace volunteer::action {
-  enum Action {};
+  enum Action { InformAboutCleanedRoom = 0x2000 };
 }
