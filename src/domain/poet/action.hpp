@@ -2,5 +2,5 @@
 #include "../../imports.hpp"
 
 namespace poet::action {
-  enum Action { RequireRoomService};
+  enum Action { RequestRoomService};
 }
