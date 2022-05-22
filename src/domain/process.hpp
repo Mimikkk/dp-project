@@ -22,6 +22,13 @@ namespace process {
       action(poet);
     }
   }
+  inline fn next_poet() {
+    return (Rank + 1) % Poets;
+  }
+  inline fn previous_poet() {
+    return (Rank + Poets - 1) % Poets;
+  }
+
   inline fn foreach_volunteer_except_me(fn action) {
     for (var volunteer = Poets; volunteer < Poets + Volunteers; ++volunteer) {
       if (is_me(volunteer)) continue;
