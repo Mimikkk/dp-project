@@ -12,7 +12,7 @@ namespace packet {
     i32 tag{};
 
     explicit Packet() = default;
-    explicit Packet(i32 data) : data(data) {}
+    Packet(i32 data) : data(data) {}
   };
 
   extern fn register_mpi_binding() -> void;

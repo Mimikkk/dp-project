@@ -1,6 +1,7 @@
 #pragma once
 #include "../imports.hpp"
 #include <stdnoreturn.h>
+#include <sstream>
 
 using std::optional;
 using std::vector;
@@ -43,4 +44,17 @@ inline fn str(const char *format, ...) {
   vsprintf(buffer.get(), format, arguments);
   va_end(arguments);
   return buffer;
+}
+
+inline fn str(const vector<i32> &items) {
+  std::stringstream ss;
+  bool first = true;
+  for (auto item: items) {
+    if (!first) ss << ", ";
+    ss << item;
+    first = false;
+  }
+
+
+  return str("[%s]", ss.str().c_str());
 }

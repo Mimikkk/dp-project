@@ -4,7 +4,6 @@
 #include <cstring>
 #include <cstdint>
 #include <cstdarg>
-#include <cstdarg>
 #include <cstdio>
 #include <memory>
 #include <random>
@@ -12,4 +11,5 @@
 #include <mpi.h>
 #include <pthread.h>
 #include <thread>
+#include <optional>
 #include "utils/common.hpp"
