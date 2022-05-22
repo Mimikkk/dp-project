@@ -17,7 +17,20 @@ namespace poet {
     optional<poet::item::Item> previous_item;
 
     var members = vector<i32>();
-    var decisions = vector<i32>({false, false, true});
+    fn find_next_member = [&]() {
+      return (i32) (std::find(std::begin(members), std::end(members), process::Rank) - std::begin(members) + 1);
+    };
+
+    var decisions = vector<bool>({false, false, true});
+    fn are_drinks_and_food_present = [&]() {
+      return std::all_of(std::begin(decisions), std::end(decisions), [](auto d) { return d; });
+    };
+
+    fn reset_state = [&]() {
+      members.clear();
+      decisions = vector<bool>({false, false, true});
+      state::change(state::Idle);
+    };
 
     fn should_create_club = [&]() {
       return rnd::use(create_club_distribution);
@@ -39,18 +52,29 @@ namespace poet {
       );
       members = move(new_members);
     };
-    
+
+    // TODO - inform mechanism
+    fn inform_members_about_room_service = [&]() {};
+    fn inform_members_about_party_start = [&]() {};
+    fn inform_members_about_party_cancel = [&]() {};
+
     // TODO - send list mechanism
     fn send_members_list = [&](var poet) {};
     fn send_decisions_list = [&](var poet) {};
-    fn await_members_list = [&]() {};
-    fn await_decisions_list = [&]() {};
+
+    // TODO - receive list mechanism
+    fn await_members_list = [&]() -> vector<i32> {
+      return {};
+    };
+    fn await_decisions_list = [&]() -> vector<bool> {
+      return {false, false, false};
+    };
 
     fn await_invitation = [&](var decision) {
       let packet = packet::receive(action::RequestInvite);
       packet::send(action::ResponseInvite, packet.source, packet::Packet(decision));
     };
-    fn await_party_start = [&](){
+    fn await_party_start = [&]() {
       return packet::receive(action::ResponsePartyStart).data;
     };
 
@@ -77,7 +101,7 @@ namespace poet {
       if (state::get() == state::Member) {
         await_room_service();
         process::sleep(rnd::use(sleep_distribution));
-        state::change(state::Idle);
+        reset_state();
       }
 
       if (should_create_club()) {
@@ -85,22 +109,21 @@ namespace poet {
         state::change(state::Member);
         await_invited_poets();
         previous_item = pick_item();
-        decisions[previous_item] = true;
+        decisions[previous_item.value()] = true;
 
-        let second_member = members[1];
-        let last_member = members.back();
-        send_members_list(second_member);
-        send_decisions_list(second_member);
+        let next_member = find_next_member();
+        send_members_list(next_member);
+        send_decisions_list(next_member);
 
-        decisions = std::move(await_decisions_list().list);
+        decisions = std::move(await_decisions_list());
 
-        if (is_party_doable()) {
-          inform_members_about_party();
+        if (are_drinks_and_food_present()) {
           request_room_service();
           inform_members_about_room_service();
+          inform_members_about_party_start();
         } else {
-          inform_members_about_party_cancelation();
-          state::change(state::Idle);
+          inform_members_about_party_cancel();
+          reset_state();
         }
       } else {
         let join_decision = rnd::use(join_invite_distribution);
@@ -108,21 +131,16 @@ namespace poet {
         if (!join_decision) continue;
         state::change(state::Member);
 
-        let packet = await_members_list();
-        let previous_member = packet.source;
-
-        members = std::move(packet.list);
-        decisions = std::move(await_decisions_list().list);
+        members = std::move(await_members_list());
+        decisions = std::move(await_decisions_list());
         previous_item = pick_item();
-        decisions[previous_item] = true;
+        decisions[previous_item.value()] = true;
 
-        let next_member = std::find(std::begin(members), std::end(members), process::Rank) - std::begin(members) + 1;
+        let next_member = find_next_member();
         send_members_list(next_member);
         send_decisions_list(next_member);
-        
-        if (not await_party_start()) {
-          state::change(state::Idle);
-        } 
+
+        if (not await_party_start()) reset_state();
       }
     }
 
