@@ -26,12 +26,8 @@ fn main(i32 argc, char **argv) -> i32 {
 
   if (process::Rank == 0) {
     console::log("Sending...");
-    packet::send(0, 0, 4);
-    console::log("Send.");
 
     console::log("Receiving...");
-    let packet = packet::receive<i32>(0, 0);
-    console::log("Received.");
   }
 
 

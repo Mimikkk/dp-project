@@ -27,12 +27,18 @@ namespace packet {
   }
 
   template<>
-  fn send<void *>(i32 tag, i32 destination) -> void {
+  fn send<void *>(i32 tag, i32 destination, void *ignored) -> void {
     send(tag, destination, Sendable::next(tag));
   }
 
   template<>
   fn send<i32>(i32 tag, i32 destination, i32 item)
+  -> void {
+    send(tag, destination, Sendable::next(tag, reinterpret_cast<void *>(item)), 1);
+  }
+
+  template<>
+  fn send<bool>(i32 tag, i32 destination, bool item)
   -> void {
     send(tag, destination, Sendable::next(tag, reinterpret_cast<void *>(item)), 1);
   }
@@ -55,7 +61,7 @@ namespace packet {
     send(tag, destination, Sendable::next(tag, _pairs), 2 * (i32) pairs.size());
   }
 
-  fn receive(i32 tag, i32 source, unique_ptr<MPI_Status> status, i32 extra) -> Sendable {
+  fn receive(i32 tag, i32 source, unique_ptr<MPI_Status> status, i32 extra = 0) -> Sendable {
     Sendable sendable;
     MPI_Recv(&sendable, 3 + extra, MPI_INT, source, tag, MPI_COMM_WORLD, status.get());
     sendable.timestamp = timestamp::resolve_conflict(sendable.timestamp);
@@ -78,6 +84,14 @@ namespace packet {
     let sendable = receive(tag, source, std::move(status), 1);
 
     return from_sendable_with_data(sendable, static_cast<int>(reinterpret_cast<usize>(sendable.data)));
+  }
+
+  template<>
+  fn receive<bool>(i32 tag, i32 source, unique_ptr<MPI_Status> status)
+  -> Packet<bool> {
+    let sendable = receive(tag, source, std::move(status), 1);
+
+    return from_sendable_with_data(sendable, static_cast<bool>(reinterpret_cast<usize>(sendable.data)));
   }
 
   template<>
@@ -123,6 +137,6 @@ namespace packet {
 
   template<>
   fn receive<void *>(i32 tag, i32 source, unique_ptr<MPI_Status> status) -> Packet<void *> {
-    return from_sendable_with_data(receive(tag, source, std::move(status)), nullptr);
+    return from_sendable_with_data<void *>(receive(tag, source, std::move(status)));
   }
 }
