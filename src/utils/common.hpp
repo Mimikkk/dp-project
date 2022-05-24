@@ -1,16 +1,10 @@
 #pragma once
 #include "../imports.hpp"
-#include <stdnoreturn.h>
-#include <sstream>
 
 using std::optional;
 using std::vector;
-
-template<typename Tp, typename Dp = std::default_delete<Tp>>
-using uptr = std::unique_ptr<Tp, Dp>;
-
-template<typename Tp>
-using sptr = std::shared_ptr<Tp>;
+using std::tuple;
+using std::unique_ptr;
 using std::move;
 
 typedef double f64;
@@ -40,7 +34,7 @@ inline fn str(const char *format, ...) {
   va_copy(size_check, arguments);
   var size = vsnprintf(nullptr, 0, format, size_check);
 
-  uptr<char> buffer{new char[size + 1]};
+  unique_ptr<char> buffer{new char[size + 1]};
   vsprintf(buffer.get(), format, arguments);
   va_end(arguments);
   return buffer;

@@ -8,7 +8,7 @@
 #include "../item.hpp"
 
 namespace poet {
-  fn master_task() -> void {
+  [[noreturn]] fn master_task() -> void {
     let sleep_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let party_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let create_club_distribution = rnd::create_b_uniform(0.5);
@@ -48,11 +48,11 @@ namespace poet {
       var new_members = vector<i32>({process::Rank});
       process::foreach_poet_except_me(
         [&](var) {
-          let packet = packet::receive(action::ResponseInvite);
+          let packet = packet::receive<i32>(action::ResponseInvite);
           if (packet.data) new_members.push_back(packet.source);
         }
       );
-      members = move(new_members);
+      members = std::move(new_members);
     };
 
     fn inform_members_about_room_service = [&]() {
@@ -65,7 +65,7 @@ namespace poet {
     fn inform_members_about_party = [&](bool shouldStart) {
       process::foreach_poet_except_me(
         [&](var poet) {
-          packet::send(action::ResponsePartyStart, poet, packet::Packet(shouldStart));
+          packet::send(action::ResponsePartyStart, poet, shouldStart);
         }
       );
     };
@@ -82,12 +82,14 @@ namespace poet {
       return {false, false, false};
     };
 
-    fn await_invitation = [&](var decision) {
+    fn await_invitation = [&]() {
       let packet = packet::receive(action::RequestInvite);
-      packet::send(action::ResponseInvite, packet.source, packet::Packet(decision));
+      let decision = rnd::use(join_invite_distribution);
+      packet::send(action::ResponseInvite, packet.source, decision);
+      return decision;
     };
     fn await_party_start = [&]() {
-      return packet::receive(action::ResponsePartyStart).data;
+      return packet::receive<i32>(action::ResponsePartyStart).data;
     };
 
     fn pick_item = [&]() {
@@ -145,9 +147,8 @@ namespace poet {
           reset_state();
         }
       } else {
-        let join_decision = rnd::use(join_invite_distribution);
-        await_invitation(join_decision);
-        if (!join_decision) continue;
+        let has_joined = await_invitation();
+        if (!has_joined) continue;
 
         state::change(state::Member);
 
@@ -164,6 +165,5 @@ namespace poet {
         else process::sleep(rnd::use(party_distribution));
       }
     }
-
   }
 }

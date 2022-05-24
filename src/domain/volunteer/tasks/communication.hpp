@@ -2,5 +2,5 @@
 #include "../../../imports.hpp"
 
 namespace volunteer {
-  fn communication_task(void *pointer) -> void *;
+  [[noreturn]] fn communication_task(void *pointer) -> void *;
 }

@@ -11,7 +11,7 @@ build: $(SOURCES) $(HEADERS)
 	@mpicxx $(SOURCES) $(FLAGS) -o bin/application
 	@echo "Build success!"
 
-clear:
+clean:
 	@echo "Clearing..."
 	@rm -rf ./bin
 	@echo "Cleared!"

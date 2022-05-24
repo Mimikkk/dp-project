@@ -2,6 +2,6 @@
 #include "../../../imports.hpp"
 
 namespace poet {
-  fn master_task() -> void;
+  [[noreturn]] fn master_task() -> void;
   
 }

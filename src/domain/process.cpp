@@ -1,6 +1,5 @@
 #include "process.hpp"
 #include "../utils/console.hpp"
-#include "definitions/packet.hpp"
 
 namespace process {
   fn check_thread_support(i32 provided) {
@@ -32,8 +31,6 @@ namespace process {
     Volunteers = (i32) strtol(argv[2], nullptr, 10);
 
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
-
-    packet::register_mpi_binding();
 
     MPI_Comm_rank(MPI_COMM_WORLD, &Rank);
     MPI_Comm_size(MPI_COMM_WORLD, &Size);
@@ -76,7 +73,6 @@ namespace process {
     console::log("Oczekuję na zakończenie wątku komunikacyjnego");
     pthread_join(communication_thread, nullptr);
 
-    packet::free_mpi_binding();
     MPI_Finalize();
   }
 }

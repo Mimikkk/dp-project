@@ -6,7 +6,7 @@
 #include "../../../utils/random.hpp"
 
 namespace volunteer {
-  fn communication_task(void *pointer) -> void * {
+  [[noreturn]] fn communication_task(void *pointer) -> void * {
     let cleaning_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
 
     loop {
@@ -19,7 +19,5 @@ namespace volunteer {
       packet::send(action::ResponseRoomServiced, packet.source);
       console::info("Room serviced!");
     }
-
-    return pointer;
   }
 }

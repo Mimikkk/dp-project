@@ -9,7 +9,7 @@
 #include <random>
 #include <cstddef>
 #include <mpi.h>
-#include <pthread.h>
 #include <thread>
 #include <optional>
+#include <sstream>
 #include "utils/common.hpp"

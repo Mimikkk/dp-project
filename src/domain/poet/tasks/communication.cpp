@@ -5,13 +5,12 @@
 #include "../../../utils/random.hpp"
 #include "../common.hpp"
 
-
 namespace poet {
-  fn communication_task(void *pointer) -> void * {
-    loop{
+  [[noreturn]] fn communication_task(void *pointer) -> void * {
+    loop {
       if (state::get() == state::Member) {
         let packet = packet::receive(action::RequestInvite);
-        packet::send(action::ResponseInvite, packet.source, packet::Packet(false));
+        packet::send(action::ResponseInvite, packet.source, false);
       }
     }
   }
