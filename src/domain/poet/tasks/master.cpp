@@ -138,6 +138,7 @@ namespace poet {
         let join_decision = rnd::use(join_invite_distribution);
         await_invitation(join_decision);
         if (!join_decision) continue;
+
         state::change(state::Member);
 
         members = std::move(await_members_list());
