@@ -10,9 +10,11 @@
 namespace poet {
   fn master_task() -> void {
     let sleep_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
+    let party_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let create_club_distribution = rnd::create_b_uniform(0.5);
     let join_invite_distribution = rnd::create_b_uniform(0.5);
     let item_distribution = rnd::create_i_uniform(0, 2);
+    let item_leak_distribution = rnd::create_b_uniform(0.5);
     let pick_item_distribution = rnd::create_b_uniform(0.5);
     optional<poet::item::Item> previous_item;
 
@@ -79,12 +81,17 @@ namespace poet {
     };
 
     fn pick_item = [&]() {
+      i32 item;
       loop {
-        let item = rnd::use(item_distribution);
-        if (not decisions[item] and rnd::use(pick_item_distribution)) {
+        do {
+          item = rnd::use(item_distribution);
+        } while (previous_item.has_value() and item == previous_item.value());
+
+        if (not decisions[item] or are_drinks_and_food_present()) {
           return static_cast<item::Item>(item);
         }
-        if (rnd::use(pick_item_distribution)) {
+
+        if (rnd::use(item_leak_distribution)) {
           return static_cast<item::Item>(item);
         }
       }
@@ -100,17 +107,17 @@ namespace poet {
     loop {
       if (state::get() == state::Member) {
         await_room_service();
-        process::sleep(rnd::use(sleep_distribution));
+        process::sleep(rnd::use(party_distribution));
         reset_state();
       }
 
       if (should_create_club()) {
-        invite_poets();
         state::change(state::Member);
+        invite_poets();
         await_invited_poets();
+
         previous_item = pick_item();
         decisions[previous_item.value()] = true;
-
         let next_member = find_next_member();
         send_members_list(next_member);
         send_decisions_list(next_member);
@@ -118,9 +125,11 @@ namespace poet {
         decisions = std::move(await_decisions_list());
 
         if (are_drinks_and_food_present()) {
+          inform_members_about_party_start();
+          process::sleep(rnd::use(sleep_distribution));
+
           request_room_service();
           inform_members_about_room_service();
-          inform_members_about_party_start();
         } else {
           inform_members_about_party_cancel();
           reset_state();
@@ -141,6 +150,9 @@ namespace poet {
         send_decisions_list(next_member);
 
         if (not await_party_start()) reset_state();
+        else {
+          process::sleep(rnd::use(party_distribution));
+        }
       }
     }
 
