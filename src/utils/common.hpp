@@ -52,3 +52,20 @@ inline fn str(const vector<i32> &items) {
 
   return str("[%s]", ss.str().c_str());
 }
+
+inline fn str(const tuple<i32, i32> pair) {
+  return str("{%d, %d}", get<0>(pair), get<1>(pair));
+}
+
+inline fn str(const vector<tuple<i32, i32>> &pairs) {
+  std::stringstream ss;
+  bool first = true;
+  for (auto pair: pairs) {
+    if (!first) ss << ", ";
+    ss << str(pair).get();
+    first = false;
+  }
+
+
+  return str("[%s]", ss.str().c_str());
+}

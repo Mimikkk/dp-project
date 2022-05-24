@@ -25,9 +25,65 @@ fn main(i32 argc, char **argv) -> i32 {
 //
 
   if (process::Rank == 0) {
+    console::log("nullptr: %d", nullptr);
+
     console::log("Sending...");
+    packet::send<i32>(0, 0, 1);
+    packet::send<i32>(0, 0, 2);
+    packet::send<i32>(0, 0, 3);
+    packet::send<i32>(0, 0, 4);
+    packet::send<bool>(0, 0, false);
+    packet::send<bool>(0, 0, true);
+    packet::send<vector<i32>>(0, 0, {1, 2, 3});
+    packet::send<vector<tuple<i32, i32>>>(0, 0, {
+      {1, 2},
+      {3, 4}
+    });
+    packet::send<vector<i32>>(0, 0, {});
+    packet::send<vector<tuple<i32, i32>>>(0, 0, {});
+    console::log("Sent");
 
     console::log("Receiving...");
+    {
+      var packet = packet::receive<i32>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<i32>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<i32>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<i32>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<bool>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<bool>(0, 0);
+      console::log("Received %d %d %d %d", packet.timestamp, packet.source, packet.tag, packet.data);
+    }
+    {
+      var packet = packet::receive<vector<i32>>(0, 0);
+      console::log("Received %d %d %d %s", packet.timestamp, packet.source, packet.tag, str(packet.data).get());
+    }
+    {
+      var packet = packet::receive<vector<tuple<i32,i32>>>(0, 0);
+      console::log("Received %d %d %d %s", packet.timestamp, packet.source, packet.tag, str(packet.data).get());
+    }
+    {
+      var packet = packet::receive<vector<i32>>(0, 0);
+      console::log("Received %d %d %d %s", packet.timestamp, packet.source, packet.tag, str(packet.data).get());
+    }
+    {
+      var packet = packet::receive<vector<tuple<i32,i32>>>(0, 0);
+      console::log("Received %d %d %d %s", packet.timestamp, packet.source, packet.tag, str(packet.data).get());
+    }
   }
 
 

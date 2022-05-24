@@ -23,6 +23,8 @@ namespace packet {
   }
 
   fn send(i32 tag, i32 destination, Sendable sendable, i32 extra = 0) {
+    console::log("%d %d %d", tag, destination, extra);
+    
     MPI_Send(&sendable, Sendable::fields + extra, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
