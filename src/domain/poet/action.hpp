@@ -11,5 +11,7 @@ namespace poet::action {
     ResponseDecisionsList = 0x1005,
     RequestdecisionsList = 0x1006,
     ResponsePartyStart = 0x1007,
+    ResponsePartyCancel = 0x1007,
+    ResponseHadRoomService = 0x1008,
   };
 }

@@ -55,10 +55,20 @@ namespace poet {
       members = move(new_members);
     };
 
-    // TODO - inform mechanism
-    fn inform_members_about_room_service = [&]() {};
-    fn inform_members_about_party_start = [&]() {};
-    fn inform_members_about_party_cancel = [&]() {};
+    fn inform_members_about_room_service = [&]() {
+      process::foreach_poet_except_me(
+        [&](var poet) {
+          packet::send(action::ResponseHadRoomService, poet);
+        }
+      );
+    };
+    fn inform_members_about_party = [&](bool shouldStart) {
+      process::foreach_poet_except_me(
+        [&](var poet) {
+          packet::send(action::ResponsePartyStart, poet, packet::Packet(shouldStart));
+        }
+      );
+    };
 
     // TODO - send list mechanism
     fn send_members_list = [&](var poet) {};
@@ -125,13 +135,13 @@ namespace poet {
         decisions = std::move(await_decisions_list());
 
         if (are_drinks_and_food_present()) {
-          inform_members_about_party_start();
+          inform_members_about_party(true);
           process::sleep(rnd::use(sleep_distribution));
 
           request_room_service();
           inform_members_about_room_service();
         } else {
-          inform_members_about_party_cancel();
+          inform_members_about_party(false);
           reset_state();
         }
       } else {
@@ -151,9 +161,7 @@ namespace poet {
         send_decisions_list(next_member);
 
         if (not await_party_start()) reset_state();
-        else {
-          process::sleep(rnd::use(party_distribution));
-        }
+        else process::sleep(rnd::use(party_distribution));
       }
     }
 
