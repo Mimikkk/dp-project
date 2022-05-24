@@ -8,9 +8,11 @@
 
 namespace poet {
   fn communication_task(void *pointer) -> void * {
-    loop {
-      let packet = packet::receive(action::RequestInvite);
-      packet::send(action::ResponseInvite, packet.source, packet::Packet(false));
+    loop{
+      if (state::get() == state::Member) {
+        let packet = packet::receive(action::RequestInvite);
+        packet::send(action::ResponseInvite, packet.source, packet::Packet(false));
+      }
     }
   }
 }
