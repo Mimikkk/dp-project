@@ -19,7 +19,7 @@
     8. W przeciwnym wypadku:
         1. Poinformuj członków koła o rozwiązaniu koła
 4. W przeciwnym wypadku:
-    1. Oczekuj na propozycję dołączenia do koła
+    1. **Oczekuj na propozycję dołączenia do koła**
     2. Dokonaj decyzji o dołączeniu do koła z prawdopodobieństwem
     3. Jeśli odmawiasz:
         1. Wróć do 1.

@@ -19,6 +19,5 @@ fn main(i32 argc, char **argv) -> i32 {
     master_task();
   }
 
-
   finalize();
 }

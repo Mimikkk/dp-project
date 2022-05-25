@@ -3,7 +3,7 @@
 
 namespace process {
   fn check_thread_support(i32 provided) {
-    console::info("Thread Support");
+    console::info("Wsparcie wątków");
 
     switch (provided) {
       case MPI_THREAD_SINGLE:
@@ -47,7 +47,7 @@ namespace process {
       Volunteers = (i32) strtol(argv[2], nullptr, 10);
 
       if (Poets < 0) {
-        throw std::domain_error("Liczba poetów powinna być więszka od zera");
+        throw std::domain_error("Liczba poetów powinna być więszka od 0");
       }
       if (Volunteers < 0) {
         throw std::domain_error("Liczba wolontariuszy powinna być więszka od zera");

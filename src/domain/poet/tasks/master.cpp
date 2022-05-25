@@ -20,9 +20,14 @@ namespace poet {
 
     var members = vector<i32>();
     fn find_next_member = [&]() {
-      return (i32) (std::find(std::begin(members), std::end(members), process::Rank)
-                    - std::begin(members) + 1) % process::Rank;
+      return members[
+        (
+          std::find(std::begin(members), std::end(members), process::Rank)
+          - std::begin(members) + 1
+        ) % members.size()
+      ];
     };
+
 
     var decisions = vector<bool>({false, false, true});
     fn are_drinks_and_food_present = [&]() {
@@ -146,6 +151,8 @@ namespace poet {
         console::info("Wybrałem: %d", item);
 
         let next_member = find_next_member();
+        console::info("Następna osoba to %d", next_member);
+
         if (next_member == members.front()) {
           console::info("Przesyłam listę decyzji do szefa %d...", next_member);
           send_decisions_list(next_member);
