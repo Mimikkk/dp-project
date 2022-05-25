@@ -20,7 +20,8 @@ namespace poet {
 
     var members = vector<i32>();
     fn find_next_member = [&]() {
-      return (i32) (std::find(std::begin(members), std::end(members), process::Rank) - std::begin(members) + 1);
+      return (i32) (std::find(std::begin(members), std::end(members), process::Rank)
+                    - std::begin(members) + 1) % process::Rank;
     };
 
     var decisions = vector<bool>({false, false, true});
@@ -119,52 +120,103 @@ namespace poet {
     };
 
     loop {
+      console::info("Zaczynam...");
+      process::sleep(0.5);
       if (state::get() == state::Member) {
+        console::info("Oczekuję posprzątania pokoju...");
         await_room_service();
-        process::sleep(rnd::use(party_distribution));
+        console::info("Odchodzę z koła");
         reset_state();
       }
 
       if (should_create_club()) {
+        console::info("Tworzę klub...");
+        console::info("Odrzucam każdą propozycję");
         state::change(state::Member);
+        console::info("Zapraszam innych...");
         invite_poets();
+
+        console::info("Oczekuję ich odpowiedzi...");
         await_invited_poets();
+        console::info("Członkowie to: %s", str(members).get());
 
-        previous_item = pick_item();
-        decisions[previous_item.value()] = true;
+        let item = pick_item();
+        decisions[item] = true;
+
+        console::info("Wybrałem: %d", item);
+
         let next_member = find_next_member();
-        send_members_list(next_member);
-        send_decisions_list(next_member);
+        if (next_member == members.front()) {
+          console::info("Przesyłam listę decyzji do szefa %d...", next_member);
+          send_decisions_list(next_member);
+        } else {
+          console::info("Przesyłam listę członków do %d...", next_member);
+          send_members_list(next_member);
+          console::info("Przesyłam listę decyzji do %d...", next_member);
+          send_decisions_list(next_member);
+        }
 
+        console::info("Oczekuje na ostatnią listę decyzji %d...", next_member);
         decisions = std::move(await_decisions_list());
 
         if (are_drinks_and_food_present()) {
+          console::info("Impreza jest możliwa");
+          console::info("Informuję resztę o jej rozpoczęciu...");
           inform_members_about_party(true);
           process::sleep(rnd::use(sleep_distribution));
+          previous_item = item;
 
+          console::info("Proszę o sprzątanie pokoju...");
           request_room_service();
+          console::info("Oczekuję posprzątania pokoju...");
+          await_room_service();
+          console::info("Informuję resztę członków o sprzątaniu...");
           inform_members_about_room_service();
         } else {
+          console::info("Impreza jest niemożliwa");
+          console::info("Informuję resztę o rozwiązaniu koła...");
           inform_members_about_party(false);
+          console::info("Odchodzę z koła");
           reset_state();
         }
       } else {
+        console::info("Oczekuję na propozycję...");
         let has_joined = await_invitation();
         if (!has_joined) continue;
 
+        console::info("Odrzucam nową każdą propozycję");
         state::change(state::Member);
 
+        console::info("Oczekuję na listę członków...");
         members = std::move(await_members_list());
+        console::info("Oczekuję na listę decyzji...");
         decisions = std::move(await_decisions_list());
-        previous_item = pick_item();
-        decisions[previous_item.value()] = true;
+        let item = pick_item();
+        decisions[item] = true;
+        console::info("Wybrałem: %d", item);
 
         let next_member = find_next_member();
-        send_members_list(next_member);
-        send_decisions_list(next_member);
+        if (next_member == members.front()) {
+          console::info("Przesyłam listę decyzji do szefa %d...", next_member);
+          send_decisions_list(next_member);
+        } else {
+          console::info("Przesyłam listę członków do %d...", next_member);
+          send_members_list(next_member);
+          console::info("Przesyłam listę decyzji do %d...", next_member);
+          send_decisions_list(next_member);
+        }
 
-        if (not await_party_start()) reset_state();
-        else process::sleep(rnd::use(party_distribution));
+        let is_party_happening = await_party_start();
+        if (not is_party_happening) {
+          console::info("Nie ma imprezy");
+          console::info("Odchodzę z koła...");
+          reset_state();
+        } else {
+          console::info("Jest impreza");
+          console::info("Imprezuję...");
+          process::sleep(rnd::use(party_distribution));
+          previous_item = item;
+        }
       }
     }
   }

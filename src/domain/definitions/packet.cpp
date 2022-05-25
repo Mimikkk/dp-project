@@ -14,13 +14,13 @@ namespace packet {
 
   template<>
   fn send<i32>(i32 destination, i32 tag, i32 item) -> void {
-    const struct { i32 timestamp;i32 item; } data = {timestamp::tick(), item};
+    const struct { i32 timestamp; i32 item; } data = {timestamp::tick(), item};
     MPI_Send(&data, 2, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
   template<>
   fn send<bool>(i32 destination, i32 tag, bool item) -> void {
-    const struct { i32 timestamp;bool item; } data = {timestamp::tick(), item};
+    const struct { i32 timestamp; bool item; } data = {timestamp::tick(), item};
     MPI_Send(&data, 2, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
@@ -77,7 +77,7 @@ namespace packet {
   fn receive<i32>(i32 tag, i32 source) -> Packet<i32> {
     MPI_Status status;
 
-    struct { i32 timestamp;i32 item; } data{};
+    struct { i32 timestamp; i32 item; } data{};
     MPI_Recv(&data, 2, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
 
     return {
@@ -91,7 +91,7 @@ namespace packet {
   template<>
   fn receive<bool>(i32 tag, i32 source) -> Packet<bool> {
     MPI_Status status;
-    struct { i32 timestamp;bool item; } data{};
+    struct { i32 timestamp; bool item; } data{};
     MPI_Recv(&data, 2, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
 
     return {
