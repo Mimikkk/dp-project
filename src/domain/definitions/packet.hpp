@@ -14,9 +14,9 @@ namespace packet {
     T data{};
   };
 
-  template<typename T>
+  template<typename T = void *>
   extern fn send(i32 destination, i32 tag, T item = nullptr) -> void;
 
-  template<typename T>
+  template<typename T= void *>
   extern fn receive(i32 tag = MPI_ANY_TAG, i32 source = MPI_ANY_SOURCE) -> Packet<T>;
 }
