@@ -16,7 +16,7 @@ namespace volunteer {
       console::info("Cleaning...");
       process::sleep(rnd::use(cleaning_distribution));
 
-      packet::send(action::ResponseRoomServiced, packet.source);
+      packet::send(packet.source, action::ResponseRoomServiced);
       console::info("Room serviced!");
     }
   }

@@ -10,7 +10,7 @@ namespace poet {
     loop {
       if (state::get() == state::Member) {
         let packet = packet::receive(action::RequestInvite);
-        packet::send(action::ResponseInvite, packet.source, false);
+        packet::send(packet.source, action::ResponseInvite, false);
       }
     }
   }
