@@ -7,11 +7,8 @@ namespace poet::action {
     RequestInvite = 0x1001,
     ResponseInvite = 0x1002,
     ResponseMembersList = 0x1003,
-    RequestMembersList = 0x1004,
-    ResponseDecisionsList = 0x1005,
-    RequestdecisionsList = 0x1006,
-    ResponsePartyStart = 0x1007,
-    ResponsePartyCancel = 0x1007,
-    ResponseHadRoomService = 0x1008,
+    ResponseDecisionsList = 0x1004,
+    ResponsePartyStart = 0x1005,
+    ResponseHadRoomService = 0x1006,
   };
 }

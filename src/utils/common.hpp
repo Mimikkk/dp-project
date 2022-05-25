@@ -53,6 +53,19 @@ inline fn str(const vector<i32> &items) {
   return str("[%s]", ss.str().c_str());
 }
 
+inline fn str(const vector<bool> &items) {
+  std::stringstream ss;
+  bool first = true;
+  for (auto item: items) {
+    if (!first) ss << ", ";
+    ss << (item ? "true" : "false");
+    first = false;
+  }
+
+
+  return str("[%s]", ss.str().c_str());
+}
+
 inline fn str(const tuple<i32, i32> pair) {
   return str("{%d, %d}", get<0>(pair), get<1>(pair));
 }

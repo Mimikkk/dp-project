@@ -12,7 +12,6 @@ namespace poet {
     let sleep_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let party_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let create_club_distribution = rnd::create_b_uniform(0.5);
-    let join_invite_distribution = rnd::create_b_uniform(0.5);
     let item_distribution = rnd::create_i_uniform(0, 2);
     let item_leak_distribution = rnd::create_b_uniform(0.5);
     let pick_item_distribution = rnd::create_b_uniform(0.5);
@@ -41,7 +40,7 @@ namespace poet {
     };
 
     fn should_create_club = [&]() {
-      return rnd::use(create_club_distribution);
+      return state::get() != state::Member and rnd::use(create_club_distribution);
     };
     fn invite_poets = [&]() {
       process::foreach_poet_except_me(
@@ -90,12 +89,6 @@ namespace poet {
       return packet::receive<vector<bool>>(action::ResponseDecisionsList).data;
     };
 
-    fn await_invitation = [&]() -> bool {
-      let packet = packet::receive(action::RequestInvite);
-      let decision = rnd::use(join_invite_distribution);
-      packet::send(packet.source, action::ResponseInvite, decision);
-      return decision;
-    };
     fn await_party_start = [&]() -> bool {
       return packet::receive<bool>(action::ResponsePartyStart).data;
     };
@@ -125,14 +118,8 @@ namespace poet {
     };
 
     loop {
-      console::info("Zaczynam...");
+      console::info("Pętlę się...");
       process::sleep(0.5);
-      if (state::get() == state::Member) {
-        console::info("Oczekuję posprzątania pokoju...");
-        await_room_service();
-        console::info("Odchodzę z koła");
-        reset_state();
-      }
 
       if (should_create_club()) {
         console::info("Tworzę klub...");
@@ -149,6 +136,7 @@ namespace poet {
         decisions[item] = true;
 
         console::info("Wybrałem: %d", item);
+        console::info("Decyzje to: %s", str(decisions).get());
 
         let next_member = find_next_member();
         console::info("Następna osoba to %d", next_member);
@@ -179,6 +167,8 @@ namespace poet {
           await_room_service();
           console::info("Informuję resztę członków o sprzątaniu...");
           inform_members_about_room_service();
+          console::info("Odchodzę z koła");
+          reset_state();
         } else {
           console::info("Impreza jest niemożliwa");
           console::info("Informuję resztę o rozwiązaniu koła...");
@@ -186,14 +176,7 @@ namespace poet {
           console::info("Odchodzę z koła");
           reset_state();
         }
-      } else {
-        console::info("Oczekuję na propozycję...");
-        let has_joined = await_invitation();
-        if (!has_joined) continue;
-
-        console::info("Odrzucam nową każdą propozycję");
-        state::change(state::Member);
-
+      } else if (state::get() == state::Member) {
         console::info("Oczekuję na listę członków...");
         members = std::move(await_members_list());
         console::info("Oczekuję na listę decyzji...");
@@ -223,6 +206,10 @@ namespace poet {
           console::info("Imprezuję...");
           process::sleep(rnd::use(party_distribution));
           previous_item = item;
+          console::info("Oczekuję posprzątania pokoju...");
+          await_room_service();
+          console::info("Odchodzę z koła");
+          reset_state();
         }
       }
     }
