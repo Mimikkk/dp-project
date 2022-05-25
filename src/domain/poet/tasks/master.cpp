@@ -70,26 +70,28 @@ namespace poet {
       );
     };
 
-    // TODO - send list mechanism
-    fn send_members_list = [&](var poet) {};
-    fn send_decisions_list = [&](var poet) {};
+    fn send_members_list = [&](var poet) {
+      packet::send(poet, action::ResponseMembersList, members);
+    };
+    fn send_decisions_list = [&](var poet) {
+      packet::send(poet, action::ResponseDecisionsList, decisions);
+    };
 
-    // TODO - receive list mechanism
     fn await_members_list = [&]() -> vector<i32> {
-      return {};
+      return packet::receive<vector<i32>>(action::ResponseMembersList).data;
     };
     fn await_decisions_list = [&]() -> vector<bool> {
-      return {false, false, false};
+      return packet::receive<vector<bool>>(action::ResponseDecisionsList).data;
     };
 
-    fn await_invitation = [&]() {
+    fn await_invitation = [&]() -> bool {
       let packet = packet::receive(action::RequestInvite);
       let decision = rnd::use(join_invite_distribution);
       packet::send(packet.source, action::ResponseInvite, decision);
       return decision;
     };
-    fn await_party_start = [&]() {
-      return packet::receive<i32>(action::ResponsePartyStart).data;
+    fn await_party_start = [&]() -> bool {
+      return packet::receive<bool>(action::ResponsePartyStart).data;
     };
 
     fn pick_item = [&]() {

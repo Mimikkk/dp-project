@@ -36,6 +36,17 @@ namespace packet {
   }
 
   template<>
+  fn send<vector<bool>>(i32 destination, i32 tag, vector<bool> items) -> void {
+    let size = (i32) (1 + items.size());
+    var data = (i32 *) malloc(size);
+    data[0] = timestamp::tick();
+
+    for (var i = 0; i < items.size(); ++i) data[i + 1] = items[i];
+
+    MPI_Send(data, size, MPI_INT, destination, tag, MPI_COMM_WORLD);
+  }
+
+  template<>
   fn send<vector<tuple<i32, i32>>>(i32 destination, i32 tag, vector<tuple<i32, i32>> items) -> void {
     let size = (i32) (1 + 2 * items.size());
     var data = (i32 *) malloc(size);
@@ -105,6 +116,30 @@ namespace packet {
 
 
     var items = vector<i32>(count - 1);
+    for (var i = 0; i < count - 1; ++i) items[i] = data[i + 1];
+
+    return {
+      timestamp::resolve_conflict(data[0]),
+      status.MPI_SOURCE,
+      status.MPI_TAG,
+      move(items),
+    };
+  }
+
+  template<>
+  fn receive<vector<bool>>(i32 tag, i32 source) -> Packet<vector<bool>> {
+    MPI_Status status;
+
+    MPI_Probe(source, tag, MPI_COMM_WORLD, &status);
+
+    i32 count;
+    MPI_Get_count(&status, MPI_INT, &count);
+
+    var data = (i32 *) malloc(count);
+    MPI_Recv(data, count, MPI_INT, source, tag, MPI_COMM_WORLD, &status);
+
+
+    var items = vector<bool>(count - 1);
     for (var i = 0; i < count - 1; ++i) items[i] = data[i + 1];
 
     return {
