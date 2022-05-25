@@ -1,7 +1,9 @@
 #include "imports.hpp"
 #include "domain/process.hpp"
-#include "domain/definitions/packet.hpp"
-#include "utils/console.hpp"
+#include "domain/volunteer/tasks/master.hpp"
+#include "domain/volunteer/tasks/communication.hpp"
+#include "domain/poet/tasks/master.hpp"
+#include "domain/poet/tasks/communication.hpp"
 
 fn main(i32 argc, char **argv) -> i32 {
   using namespace process;

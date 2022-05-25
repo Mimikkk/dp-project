@@ -12,7 +12,7 @@ namespace packet {
     T data{};
   };
 
-  template<typename T = void *>
+  template<typename T= void *>
   extern fn send(i32 destination, i32 tag, T item = nullptr) -> void;
 
   template<typename T= void *>
