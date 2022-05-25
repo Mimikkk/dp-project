@@ -40,7 +40,7 @@ namespace poet {
     fn invite_poets = [&]() {
       process::foreach_poet_except_me(
         [&](var poet) {
-          packet::send(action::RequestInvite, poet);
+          packet::send(poet, action::RequestInvite);
         }
       );
     };
@@ -58,14 +58,14 @@ namespace poet {
     fn inform_members_about_room_service = [&]() {
       process::foreach_poet_except_me(
         [&](var poet) {
-          packet::send(action::ResponseHadRoomService, poet);
+          packet::send(poet, action::ResponseHadRoomService);
         }
       );
     };
     fn inform_members_about_party = [&](bool shouldStart) {
       process::foreach_poet_except_me(
         [&](var poet) {
-          packet::send(action::ResponsePartyStart, poet, shouldStart);
+          packet::send(poet, action::ResponsePartyStart, shouldStart);
         }
       );
     };
@@ -85,7 +85,7 @@ namespace poet {
     fn await_invitation = [&]() {
       let packet = packet::receive(action::RequestInvite);
       let decision = rnd::use(join_invite_distribution);
-      packet::send(action::ResponseInvite, packet.source, decision);
+      packet::send(packet.source, action::ResponseInvite, decision);
       return decision;
     };
     fn await_party_start = [&]() {
@@ -110,7 +110,7 @@ namespace poet {
     };
 
     fn request_room_service = [&]() {
-      packet::send(action::RequestRoomService, process::random_volunteer());
+      packet::send(process::random_volunteer(), action::RequestRoomService);
     };
     fn await_room_service = [&]() {
       packet::receive(volunteer::action::ResponseRoomServiced);
