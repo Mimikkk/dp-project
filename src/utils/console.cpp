@@ -1,13 +1,13 @@
 #include "console.hpp"
 #include "color.hpp"
+#include "../domain/definitions/timestamp.hpp"
 #include "../domain/process.hpp"
-#include "../domain/definitions/packet.hpp"
 
 namespace console {
   namespace {
     using namespace color;
     using namespace process;
-    using namespace packet;
+    using namespace timestamp;
 
     #define printfln(fmt)               \
     do {                              \
@@ -23,7 +23,7 @@ namespace console {
     }
 
     fn time() {
-      return str("%sAt %s%08lu", Gray, Blue, timestamp());
+      return str("%sAt %s%08lu", Gray, Blue, current());
     }
 
     fn nfo() {

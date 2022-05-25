@@ -3,14 +3,18 @@
 #include "Resource.hpp"
 
 namespace timestamp {
-  Resource clock(0);
+  inline Resource clock(0);
 
-  fn tick() {
+  inline fn current() {
+    return clock.value();
+  }
+
+  inline fn tick() {
     clock.update([](var value) { ++(*value); });
     return clock.value();
   }
-  
-  fn resolve_conflict(i32 other) {
+
+  inline fn resolve_conflict(i32 other) {
     clock.update([&](var value) { *value = std::max(*value, other) + 1; });
     return clock.value();
   }

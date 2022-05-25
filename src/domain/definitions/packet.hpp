@@ -4,8 +4,6 @@
 #include "../../imports.hpp"
 
 namespace packet {
-  extern fn timestamp() -> i32;
-
   template<typename T = void *>
   struct Packet {
     i32 timestamp{};

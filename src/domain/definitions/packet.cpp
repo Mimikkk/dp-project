@@ -6,10 +6,6 @@
 #include "../../utils/console.hpp"
 
 namespace packet {
-  fn timestamp() -> i32 {
-    return timestamp::clock.value();
-  }
-
   template<>
   fn send<void *>(i32 destination, i32 tag, void *ignored) -> void {
     let stamp = timestamp::tick();
@@ -18,35 +14,33 @@ namespace packet {
 
   template<>
   fn send<i32>(i32 destination, i32 tag, i32 item) -> void {
-    const struct {
-      i32 timestamp;
-      i32 item;
-    } data = {timestamp::tick(), item};
+    const struct { i32 timestamp;i32 item; } data = {timestamp::tick(), item};
     MPI_Send(&data, 2, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
   template<>
   fn send<bool>(i32 destination, i32 tag, bool item) -> void {
-    const struct {
-      i32 timestamp;
-      bool item;
-    } data = {timestamp::tick(), item};
+    const struct { i32 timestamp;bool item; } data = {timestamp::tick(), item};
     MPI_Send(&data, 2, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
   template<>
-  fn send<const vector<i32> &>(i32 destination, i32 tag, const vector<i32> &items) -> void {
+  fn send<vector<i32>>(i32 destination, i32 tag, vector<i32> items) -> void {
     let size = (i32) (1 + items.size());
     var data = (i32 *) malloc(size);
+    data[0] = timestamp::tick();
+
     for (var i = 0; i < items.size(); ++i) data[i + 1] = items[i];
 
     MPI_Send(data, size, MPI_INT, destination, tag, MPI_COMM_WORLD);
   }
 
   template<>
-  fn send<const vector<tuple<i32, i32>> &>(i32 destination, i32 tag, const vector<tuple<i32, i32>> &items) -> void {
+  fn send<vector<tuple<i32, i32>>>(i32 destination, i32 tag, vector<tuple<i32, i32>> items) -> void {
     let size = (i32) (1 + 2 * items.size());
     var data = (i32 *) malloc(size);
+
+    data[0] = timestamp::tick();
     for (var i = 0; i < items.size(); ++i) {
       data[i + 1] = get<0>(items[i]);
       data[i + 2] = get<1>(items[i]);
