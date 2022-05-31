@@ -3,5 +3,4 @@
 
 namespace poet {
   [[noreturn]] fn master_task() -> void;
-  
 }

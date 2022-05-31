@@ -51,9 +51,12 @@ namespace poet {
     };
     fn await_invited_poets = [&]() {
       var new_members = vector<i32>({process::Rank});
+      console::event("Inviting");
       process::foreach_poet_except_me(
         [&](var) {
-          let packet = packet::receive<i32>(action::ResponseInvite);
+          console::event("receiving...");
+          let packet = packet::receive<bool>(action::ResponseInvite);
+          console::event("I received %d from %d", packet.data, packet.source);
           if (packet.data) new_members.push_back(packet.source);
         }
       );
@@ -61,18 +64,16 @@ namespace poet {
     };
 
     fn inform_members_about_room_service = [&]() {
-      process::foreach_poet_except_me(
-        [&](var poet) {
-          packet::send(poet, action::ResponseHadRoomService);
-        }
-      );
+      for (let member: members) {
+        if (process::is_me(member)) continue;
+        packet::send(member, volunteer::action::ResponseRoomServiced);
+      }
     };
     fn inform_members_about_party = [&](bool shouldStart) {
-      process::foreach_poet_except_me(
-        [&](var poet) {
-          packet::send(poet, action::ResponsePartyStart, shouldStart);
-        }
-      );
+      for (let member: members) {
+        if (process::is_me(member)) continue;
+        packet::send(member, action::ResponsePartyStart, shouldStart);
+      }
     };
 
     fn send_members_list = [&](var poet) {
@@ -121,10 +122,15 @@ namespace poet {
       console::info("Pętlę się...");
       process::sleep(0.5);
 
+      var resource = state::raw();
+      resource->lock();
       if (should_create_club()) {
         console::info("Tworzę klub...");
         console::info("Odrzucam każdą propozycję");
-        state::change(state::Member);
+
+        resource->set(state::Member);
+        resource->unlock();
+
         console::info("Zapraszam innych...");
         invite_poets();
 
@@ -177,6 +183,7 @@ namespace poet {
           reset_state();
         }
       } else if (state::get() == state::Member) {
+        resource->unlock();
         console::info("Oczekuję na listę członków...");
         members = std::move(await_members_list());
         console::info("Oczekuję na listę decyzji...");
@@ -184,6 +191,7 @@ namespace poet {
         let item = pick_item();
         decisions[item] = true;
         console::info("Wybrałem: %d", item);
+        console::info("Decyzje to: %s", str(decisions).get());
 
         let next_member = find_next_member();
         if (next_member == members.front()) {
@@ -211,6 +219,8 @@ namespace poet {
           console::info("Odchodzę z koła");
           reset_state();
         }
+      } else {
+        resource->unlock();
       }
     }
   }

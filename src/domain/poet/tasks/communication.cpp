@@ -11,13 +11,14 @@ namespace poet {
     loop {
       let packet = packet::receive(action::RequestInvite);
 
-      if (state::get() == state::Member) {
-        packet::send(packet.source, action::ResponseInvite, false);
-      } else {
-        let decision = rnd::use(join_invite_distribution);
-        if (decision) state::change(state::Member);
-        packet::send(packet.source, action::ResponseInvite, decision);
-      }
+      state::raw()->update([&](var state) {
+        if (state::get() == state::Member or not rnd::use(join_invite_distribution)) {
+          packet::send(packet.source, action::ResponseInvite, false);
+        } else {
+          *state = state::Member;
+          packet::send(packet.source, action::ResponseInvite, true);
+        }
+      });
     }
   }
 }

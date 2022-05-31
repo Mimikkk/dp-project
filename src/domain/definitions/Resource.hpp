@@ -18,8 +18,18 @@ public:
 
   fn value() { return _value; }
   fn update(fn task) {
-    pthread_mutex_lock(&mutex);
+    lock();
     task(&_value);
+    unlock();
+  }
+
+  fn lock() {
+    pthread_mutex_lock(&mutex);
+  }
+  fn unlock() {
     pthread_mutex_unlock(&mutex);
+  }
+  fn set(T value) {
+    _value = value;
   }
 };
