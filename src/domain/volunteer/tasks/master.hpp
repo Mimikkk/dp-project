@@ -2,5 +2,5 @@
 #include "../../../imports.hpp"
 
 namespace volunteer {
-  fn master_task() -> void;
+  [[noreturn]] fn master_task() -> void;
 }
