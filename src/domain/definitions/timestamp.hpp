@@ -5,9 +5,9 @@
 namespace timestamp {
   inline Resource clock(0);
 
-  inline fn current() {
-    return clock.value();
-  }
+  inline fn set(i32 value) { clock.set(value); }
+
+  inline fn current() { return clock.value(); }
 
   inline fn tick() {
     clock.update([](var value) { ++(*value); });

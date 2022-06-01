@@ -15,8 +15,9 @@ namespace poet {
         if (state::get() == state::Member or not rnd::use(join_invite_distribution)) {
           packet::send(packet.source, action::ResponseInvite, false);
         } else {
-          *state = state::Member;
-          packet::send(packet.source, action::ResponseInvite, true);
+          let decision = rnd::use(join_invite_distribution);
+          if (decision) *state = state::Member;
+          packet::send(packet.source, action::ResponseInvite, decision);
         }
       });
     }
