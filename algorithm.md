@@ -42,24 +42,14 @@
 4. Czekaj na zdarzenie
 5. Jeżeli otrzymałeś wiadomość z prośbą o sprzątanie od poety:
     1. Umieść identyfikator poety na końcu listy pokojów
-    2. Jeżeli długość listy pokojów jest równa 1
-        1. Jeżeli id wolontariusza jest ustawione:
-            1. Usuń zapisane id wolontariusza
-            2. Zinkrementuj licznik odmów
-            3. Jeżeli licznik odmów jest większy od stałej:
-                1. Wróć do 4.
-        2. W przeciwnym wypadku:
-            1. Ustaw licznik odmów na 0
-        3. Zapisz id wolontariusza z początku listy wolontariuszy
-        4. Poinformuj wolontariusza, którego id zapisałeś, o potrzebie sprzątania pokoju z początku listy pokojów
+    2. Wykonaj process
 6. Jeżeli otrzymałeś wiadomość z informacją o rozpoczęciu sprzątania przez wolontariusza:
     1. Usuń z listy wolontariuszy wolontariusza, którego id jest równe id nadawcy
     2. Jeżeli id nadawcy jest równe zapisanemu id wolontariusza:
         1. Jeżeli pokój sprzątany przez nadawcę jest pierwszym pokojem z listy pokojów:
             1. Usuń pierwszy element z listy pokojów
             2. Usuń zapisane id wolontariusza
-        2. Jeżeli długość listy pokojów jest większa lub równa 1:
-            1. Wróć do 5.2.1
+        2. Wykonaj process
 7. Jeżeli otrzymałeś wiadomość z informacją o zakończeniu sprzątania przez wolontariusza:
     1. Dodaj do listy wolontariuszy parę (wartość zegara Lamport'a nadawcy, id nadawcy)
     2. Posortuj rosnąco listę wolontariuszy
@@ -70,9 +60,21 @@
     1. Jeżeli licznik odmów jest większy od stałej:
         1. Usuń pierwszy element z listy pokojów
         2. Zacznij sprzątać
-        3. Jeżeli długość listy pokojów jest większa lub równa 1:
-            1. Wróć do 5.2.1
+        3. Wykonaj process
     2. Zapisz wartość swojego zegara Lamport'a
     3. Wyślij informację o zakończeniu sprzątania, razem z zapisaną wartością zegara Lamport'a, do wszystkich
        wolontariuszy
 10. Wróć do 4.
+
+process:
+1. Jeżeli długość listy pokojów jest równa 1
+   1. Jeżeli id wolontariusza jest ustawione:
+   2. Usuń zapisane id wolontariusza
+   3. Zinkrementuj licznik odmów
+   4. Jeżeli licznik odmów jest większy od stałej:
+   5. Wróć do 4.
+   6. W przeciwnym wypadku:
+   7. Ustaw licznik odmów na 0
+   8. Zapisz id wolontariusza z początku listy wolontariuszy
+   9. Poinformuj wolontariusza, którego id zapisałeś, 
+      o potrzebie sprzątania pokoju z początku listy pokojów
