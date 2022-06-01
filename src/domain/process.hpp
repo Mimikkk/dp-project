@@ -16,12 +16,16 @@ namespace process {
   inline fn is_volunteer(i32 rank) { return rank >= Poets and rank < Volunteers; }
   inline fn is_poet(i32 rank) { return rank < Poets; }
 
-  inline fn foreach_poet_except_me(fn action) {
-    for (var poet = 0; poet < Poets; ++poet) {
-      if (is_me(poet)) continue;
-      action(poet);
-    }
+  inline fn foreach_poet(fn action) -> void {
+    for (var poet = 0; poet < Poets; ++poet) action(poet);
   }
+
+  inline fn foreach_poet_except_me(fn action) {
+    foreach_poet([&](i32 poet) {
+      if (not is_me(poet)) action(poet);
+    });
+  }
+  
   inline fn next_poet() {
     return (Rank + 1) % Poets;
   }
@@ -29,12 +33,16 @@ namespace process {
     return (Rank + Poets - 1) % Poets;
   }
 
-  inline fn foreach_volunteer_except_me(fn action) {
-    for (var volunteer = Poets; volunteer < Poets + Volunteers; ++volunteer) {
-      if (is_me(volunteer)) continue;
-      action(volunteer);
-    }
+  inline fn foreach_volunteer(fn action) {
+    for (var volunteer = Poets; volunteer < Poets + Volunteers; ++volunteer) action(volunteer);
   }
+
+  inline fn foreach_volunteer_except_me(fn action) {
+    foreach_volunteer([&](i32 volunteer) {
+      if (not is_me(volunteer)) action(volunteer);
+    });
+  }
+
 
   inline fn random_poet() {
     static let uniform = rnd::create_i_uniform(0, Poets - 1);
