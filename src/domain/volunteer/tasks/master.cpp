@@ -12,11 +12,11 @@
   vector<i32> rooms;
   timestamp::set(process::Rank);
   vector<tuple<i32, i32>> queue;
-  for (var i = 0; i < process::Volunteers; ++i) queue.emplace_back(i, i + process::Poets);
+  for (var i = 0; i < process::Volunteers; ++i) queue.emplace_back(i + process::Poets, i + process::Poets);
   console::log("start rooms: %s", str(rooms).get());
   console::log("start queue: %s", str(queue).get());
 
-  fn clean = [&]() {
+  fn service_room = [&]() {
     process::sleep(rnd::use(cleaning_distribution));
   };
   fn remove_volunteer = [&](let volunteer) {
@@ -45,10 +45,10 @@
       }
     );
   };
-  fn inform_volunteers_about_service_end = [&]() {
+  fn inform_volunteers_about_service_end = [&](let poet) {
     process::foreach_volunteer(
       [&](var volunteer) {
-        packet::send(volunteer, action::ResponseServiceEnd);
+        packet::send(volunteer, action::ResponseServiceEnd, poet);
       }
     );
   };
@@ -89,35 +89,6 @@
         if (rooms.size() == 1) handshake();
       }
         break;
-      case action::ResponseServiceStart: {
-        console::event("%d rozpoczął sprzątanie", packet.source);
-        remove_volunteer(packet.source);
-
-        if (packet.source == saved_volunteer) {
-          console::info("Osoba zapisana sprząta");
-
-          if (rooms.front() == packet.source) {
-            console::info("To był pokój poety");
-            rooms.erase(begin(rooms));
-            saved_volunteer.reset();
-          }
-
-          console::info("Pokoje do posprzątania %s", str(rooms).get());
-          if (!rooms.empty()) handshake();
-        }
-      }
-        break;
-      case action::ResponseServiceEnd: {
-        console::event("%d zakończył sprzątanie", packet.source);
-
-        queue.emplace_back(packet.timestamp, packet.source);
-        std::sort(std::begin(queue), std::end(queue), [&](var first, var second) {
-          let [first_timestamp, first_source] = first;
-          let [second_timestamp, second_source] = second;
-          return first_timestamp - second_timestamp;
-        });
-      }
-        break;
       case volunteer::action::RequestService: {
         let poet = packet.data;
         console::event("Zostałem poproszony o sprzątanie pokoju poety %d", poet);
@@ -126,22 +97,62 @@
         inform_volunteers_about_service_start();
 
         console::info("Sprzątam...");
-        clean();
-//        if (reject_count > MaxRejections) {
-//          console::info("Przekroczyłem limit odmówień...");
-//          rooms.erase(begin(rooms));
-//
-//          console::info("Sprzątam...");
-//          clean();
-//
-//          console::info("Pokoje do posprzątania %s", str(rooms).get());
-//          if (!rooms.empty()) handshake();
-//        }
+        service_room();
 
         console::info("Informuję o zakończeniu sprzątania...");
-        inform_volunteers_about_service_end();
+        inform_volunteers_about_service_end(poet);
         console::info("Informuję poetę o zakończonym sprzątaniu...");
         inform_poet_about_service_end(poet);
+
+        if (reject_count > MaxRejections) {
+          console::info("Przekroczyłem limit odmówień...");
+          console::error("Sam sprzątam!");
+
+          let poet = rooms.front();
+          rooms.erase(begin(rooms));
+
+          console::info("Sprzątam...");
+          service_room();
+
+          console::info("Informuję o zakończeniu sprzątania...");
+          inform_volunteers_about_service_end(poet);
+          console::info("Informuję poetę o zakończonym sprzątaniu...");
+          inform_poet_about_service_end(poet);
+          console::info("Pokoje do posprzątania %s", str(rooms).get());
+          if (not rooms.empty()) handshake();
+        }
+      }
+        break;
+      case action::ResponseServiceStart: {
+        console::event("%d rozpoczął sprzątanie", packet.source);
+        remove_volunteer(packet.source);
+
+        if (packet.source == saved_volunteer) {
+          console::info("Osoba zapisana sprząta");
+
+          if (rooms.front() == packet.data) {
+            console::info("To był pokój poety");
+            rooms.erase(begin(rooms));
+            saved_volunteer.reset();
+          }
+
+          console::info("Pokoje do posprzątania %s", str(rooms).get());
+          if (not rooms.empty()) handshake();
+        }
+      }
+        break;
+      case action::ResponseServiceEnd: {
+        console::event("%d zakończył sprzątanie", packet.source);
+
+        queue.emplace_back(packet.timestamp, packet.source);
+        console::event("%d zakończył sprzątanie", packet.source);
+
+        console::info("Sortowanie kolejki...");
+        std::sort(std::begin(queue), std::end(queue), [&](var first, var second) {
+          let [first_timestamp, first_source] = first;
+          let [second_timestamp, second_source] = second;
+          return first_timestamp < second_timestamp;
+        });
       }
         break;
     }

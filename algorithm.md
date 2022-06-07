@@ -37,45 +37,53 @@
 
 1. Utwórz listę pokojów czekających na sprzątanie
 2. Ustaw swój zegar Lamport'a na swój identyfikator procesu
-3. Utwórz początkową listę par (wartość zegara Lamport'a, id wolontariusza), 
-     w postaci [(0, 0), (1, 1), (2, 2), ..., (n-1, n-1)]
-4. Czekaj na zdarzenie
-5. Jeżeli otrzymałeś wiadomość z prośbą o sprzątanie od poety:
+3. Utwórz początkową listę par (wartość zegara Lamport'a, id wolontariusza),
+   w postaci [(0, 0), (1, 1), (2, 2), ..., (n-1, n-1)]
+4. Oczekuj na wiadomość
+5. Jeżeli to prośba o sprzątanie od poety:
     1. Umieść identyfikator poety na końcu listy pokojów
     2. Jeżeli długość listy pokojów jest równa 1:
         1. Przejdź do uzgadniania
-6. Jeżeli otrzymałeś wiadomość z informacją o rozpoczęciu sprzątania przez wolontariusza:
-    1. Usuń z listy wolontariuszy wolontariusza, którego id jest równe id nadawcy
+8. Jeżeli to prośba o sprzątanie od wolontariusza i jesteś wolny:
+    1. Wyślij informację o rozpoczęciu sprzątania,
+       z załączonym identyfikatorem pokoju,
+       do wszystkich wolontariuszy
+    2. Zacznij sprzątać
+6. Jeżeli to informacja o rozpoczęciu sprzątania przez wolontariusza:
+    1. Usuń z listy wolontariuszy wolontariusza,
+       którego id jest równe id nadawcy
     2. Jeżeli id nadawcy jest równe zapisanemu id wolontariusza:
         1. Jeżeli pokój sprzątany przez nadawcę jest pierwszym pokojem z listy pokojów:
             1. Usuń pierwszy element z listy pokojów
             2. Usuń zapisane id wolontariusza
         2. Jeżeli lista pokojów jest niepusta:
             1. Przejdź do uzgadniania
-7. Jeżeli otrzymałeś wiadomość z informacją o zakończeniu sprzątania przez wolontariusza:
-    1. Dodaj do listy wolontariuszy parę (wartość zegara Lamport'a nadawcy, id nadawcy)
-    2. Posortuj rosnąco listę wolontariuszy
-8. Jeżeli otrzymałeś wiadomość z prośbą o sprzątanie od wolontariusza i jesteś wolny:
-    1. Wyślij informację o rozpoczęciu sprzątania, z załączonym id pokoju, do wszystkich wolontariuszy
-    2. Zacznij sprzątać
+7. Jeżeli to informacja o zakończeniu sprzątania przez wolontariusza:
+    1. Dodaj do listy wolontariuszy parę
+       (wartość zegara Lamport'a nadawcy, id nadawcy)
+    2. Posortuj rosnąco listę wolontariuszy (wg. wartości zegara Lamport'a)
 9. Jeżeli zakończyłeś sprzątać to:
-   1. Jeżeli licznik odmów jest większy od stałej:
-      1. Usuń pierwszy element z listy pokojów
-      2. Zacznij sprzątać
-      3. Jeżeli lista pokojów jest niepusta:
-         1. Przejdź do uzgadniania
-   3. Wyślij informację o zakończeniu sprzątania,
-        razem z zegarem Lamport'a, do wszystkich wolontariuszy
-   4. Wyślij informację o zakończeniu sprzątania do poety
+    1. Jeżeli licznik odmów jest większy od stałej:
+        1. Usuń pierwszy element z listy pokojów
+        2. Zacznij sprzątać
+        3. Jeżeli lista pokojów jest niepusta:
+            1. Przejdź do uzgadniania
+    2. Wyślij informację o zakończeniu sprzątania,
+       razem z zegarem Lamport'a,
+       do wszystkich wolontariuszy
+    3. Wyślij informację o zakończeniu sprzątania do poety
 10. Wróć do 4.
 
 uzgadnianie:
+
 1. Jeżeli id wolontariusza jest ustawione:
-   1. Usuń zapisane id wolontariusza
-   2. Inkrementuj licznik odmów
-   3. Jeżeli licznik odmów jest większy od limitu:
-      1. Wróć do 4.
+    1. Usuń zapisane id wolontariusza
+    2. Inkrementuj licznik odmów
+    3. Jeżeli licznik odmów jest większy od limitu:
+        1. Wróć do 4.
 2. W przeciwnym wypadku:
-   1. Zresetuj licznik odmów
+    1. Zresetuj licznik odmów
 3. Zapisz id wolontariusza z początku listy wolontariuszy
-4. Poinformuj wolontariusza, którego id zapisałeś, o potrzebie sprzątania pokoju z początku listy pokojów
+4. Poinformuj wolontariusza,
+   którego id zapisałeś,
+   o potrzebie sprzątania pokoju z początku listy pokojów
