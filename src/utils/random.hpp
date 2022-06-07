@@ -22,7 +22,7 @@ namespace rnd {
     return std::bernoulli_distribution(p);
   }
 
-  inline fn use(auto distribution) {
+  inline fn use(fn distribution) {
     static var gen = generator();
     return distribution(gen);
   }

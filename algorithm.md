@@ -69,12 +69,12 @@
 process:
 1. Jeżeli długość listy pokojów jest równa 1
    1. Jeżeli id wolontariusza jest ustawione:
-   2. Usuń zapisane id wolontariusza
-   3. Zinkrementuj licznik odmów
-   4. Jeżeli licznik odmów jest większy od stałej:
-   5. Wróć do 4.
-   6. W przeciwnym wypadku:
-   7. Ustaw licznik odmów na 0
-   8. Zapisz id wolontariusza z początku listy wolontariuszy
-   9. Poinformuj wolontariusza, którego id zapisałeś, 
+      1. Usuń zapisane id wolontariusza
+      2. Zinkrementuj licznik odmów
+      3. Jeżeli licznik odmów jest większy od stałej:
+      4. Wróć do 4.
+2. W przeciwnym wypadku:
+   1. Ustaw licznik odmów na 0
+   2. Zapisz id wolontariusza z początku listy wolontariuszy
+   3. Poinformuj wolontariusza, którego id zapisałeś, 
       o potrzebie sprzątania pokoju z początku listy pokojów

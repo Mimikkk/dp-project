@@ -1,9 +1,9 @@
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-SOURCES=$(call rwildcard, src/, *.cpp)
-HEADERS=$(call rwildcard, src/, *.hpp)
+SOURCES=$(shell find ./src -type f -name *.cpp)
+HEADERS=$(shell find ./src -type f -name *.hpp)
 FLAGS=-g -std=gnu++17 -fconcepts
 
-all: build run-1-1
+all: build
 
 build: $(SOURCES) $(HEADERS)
 	@echo "Building..."

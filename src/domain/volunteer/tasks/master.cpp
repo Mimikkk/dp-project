@@ -22,7 +22,24 @@ namespace volunteer {
     var is_free = false;
     let MaxRejections = 5;
     var reject_count = 0;
-    var saved_volunteer = 0;
+    optional<i32> saved_volunteer;
+    
+    fn inform_about_cleaning = [&](var volunteer, var room) {
+      packet::send(volunteer, volunteer::action::RequestRoomCleaning, room);
+    };
+    fn process = [&]() {
+      if (queue.size() == 1) {
+        saved_volunteer.reset();
+        ++reject_count;
+      } else {
+        let [volunteer, _] = queue.front()
+        saved_volunteer.emplace(volunteer);
+        reject_count = 0;
+        let room = rooms.front()
+        inform_about_cleaning(volunteer, room);
+      }
+    };
+    
     loop {
       let packet = packet::receive();
 
