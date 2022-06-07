@@ -59,15 +59,14 @@
     1. Wyślij informację o rozpoczęciu sprzątania, z załączonym id pokoju, do wszystkich wolontariuszy
     2. Zacznij sprzątać
 9. Jeżeli zakończyłeś sprzątać to:
-   Jeżeli licznik odmów jest większy od stałej:
-   1. Usuń pierwszy element z listy pokojów
-   2. Zacznij sprzątać
-   3. Jeżeli lista pokojów jest niepusta:
-      1. Przejdź do uzgadniania
-   4. Zapisz wartość swojego zegara Lamport'a
-   5. Wyślij informację o zakończeniu sprzątania,
-      razem z zapisaną wartością zegara Lamport'a, do wszystkich wolontariuszy
-   6. Wyślij informację o zakończeniu sprzątania do poety
+   1. Jeżeli licznik odmów jest większy od stałej:
+      1. Usuń pierwszy element z listy pokojów
+      2. Zacznij sprzątać
+      3. Jeżeli lista pokojów jest niepusta:
+         1. Przejdź do uzgadniania
+   3. Wyślij informację o zakończeniu sprzątania,
+        razem z zegarem Lamport'a, do wszystkich wolontariuszy
+   4. Wyślij informację o zakończeniu sprzątania do poety
 10. Wróć do 4.
 
 uzgadnianie:
