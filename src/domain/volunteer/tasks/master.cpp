@@ -25,6 +25,7 @@ namespace volunteer {
     var saved_volunteer = 0;
     loop {
       let packet = packet::receive();
+
       switch (packet.tag) {
         case poet::action::RequestRoomService: {
           rooms.emplace_back(packet.source);  
@@ -42,14 +43,16 @@ namespace volunteer {
           break;
         case action::ResponseRoomInService: {
           remove_volunteer(packet.source);
-          if (packet.source = saved_volunteer) {
+          if (packet.source == saved_volunteer) {
           }
         }
           break;
         case action::ResponseRoomServiced: {
           queue.emplace_back(packet.timestamp, packet.source);
           std::sort(std::begin(queue), std::end(queue), [&](var first, var second) {
-            return get<0>(first) - get<0>(second);
+            let [first_timestamp, first_source] = first;
+            let [second_timestamp, second_source] = second;
+            return first_timestamp - second_timestamp;
           });
         }
           break;

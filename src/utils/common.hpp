@@ -67,7 +67,8 @@ inline fn str(const vector<bool> &items) {
 }
 
 inline fn str(const tuple<i32, i32> pair) {
-  return str("{%d, %d}", get<0>(pair), get<1>(pair));
+  let [first, second] = pair;
+  return str("{%d, %d}", first, second);
 }
 
 inline fn str(const vector<tuple<i32, i32>> &pairs) {

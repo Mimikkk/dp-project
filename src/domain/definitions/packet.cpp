@@ -53,8 +53,9 @@ namespace packet {
 
     data[0] = timestamp::tick();
     for (var i = 0; i < items.size(); ++i) {
-      data[i + 1] = get<0>(items[i]);
-      data[i + 2] = get<1>(items[i]);
+      let [first, second] = items[i];
+      data[i + 1] = first;
+      data[i + 2] = second;
     }
 
     MPI_Send(data, size, MPI_INT, destination, tag, MPI_COMM_WORLD);
@@ -163,8 +164,7 @@ namespace packet {
 
     var items = vector<tuple<i32, i32>>((count - 1) / 2);
     for (var i = 0; i < (count - 1) / 2; ++i) {
-      get<0>(items[i]) = data[i + 1];
-      get<1>(items[i]) = data[i + 2];
+      items[i] = std::make_tuple(data[i + 1], data[i + 2]);
     }
 
     return {

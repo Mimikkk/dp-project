@@ -1,7 +1,7 @@
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 SOURCES=$(call rwildcard, src/, *.cpp)
 HEADERS=$(call rwildcard, src/, *.hpp)
-FLAGS=-g -std=gnu++2a -fconcepts
+FLAGS=-g -std=gnu++17 -fconcepts
 
 all: build run-1-1
 
