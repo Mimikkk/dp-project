@@ -90,7 +90,7 @@
       }
         break;
       case volunteer::action::RequestService: {
-        let poet = packet.data;
+        var poet = packet.data;
         console::event("Zostałem poproszony o sprzątanie pokoju poety %d", poet);
 
         console::info("Informuję o rozpoczęciu sprzątania...");
@@ -108,7 +108,7 @@
           console::info("Przekroczyłem limit odmówień...");
           console::error("Sam sprzątam!");
 
-          let poet = rooms.front();
+          poet = rooms.front();
           rooms.erase(begin(rooms));
 
           console::info("Sprzątam...");
