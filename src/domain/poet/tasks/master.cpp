@@ -63,7 +63,7 @@ namespace poet {
     fn inform_members_about_room_service = [&]() {
       for (let member: members) {
         if (process::is_me(member)) continue;
-        packet::send(member, volunteer::action::ResponseRoomServiced);
+        packet::send(member, volunteer::action::ResponseServiceEnd);
       }
     };
     fn inform_members_about_party = [&](bool shouldStart) {
@@ -96,7 +96,7 @@ namespace poet {
       loop {
         do {
           item = rnd::use(item_distribution);
-        } while (previous_item.has_value() and item == previous_item.value());
+        } while (item == previous_item);
 
         if (not decisions[item] or are_drinks_and_food_present()) {
           return static_cast<item::Item>(item);
@@ -112,7 +112,7 @@ namespace poet {
       packet::send(process::random_volunteer(), action::RequestRoomService);
     };
     fn await_room_service = [&]() {
-      packet::receive(volunteer::action::ResponseRoomServiced);
+      packet::receive(volunteer::action::ResponseServiceEnd);
     };
     loop {
       console::info("Requesting room service...");

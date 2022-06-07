@@ -3,8 +3,8 @@
 
 namespace volunteer::action {
   enum Action {
-    ResponseRoomServiced = 0x2000,
-    RequestRoomService = 0x2001,
-    ResponseRoomInService = 0x2002,
+    RequestService = 2001,
+    ResponseServiceStart = 2003,
+    ResponseServiceEnd = 2004,
   };
 }
