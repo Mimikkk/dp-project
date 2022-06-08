@@ -13,14 +13,12 @@
   timestamp::set(process::Rank);
   vector<tuple<i32, i32>> queue;
   for (var i = 0; i < process::Volunteers; ++i) queue.emplace_back(i + process::Poets, i + process::Poets);
-  console::log("start rooms: %s", str(rooms).get());
-  console::log("start queue: %s", str(queue).get());
 
   fn service_room = [&]() {
     process::sleep(rnd::use(cleaning_distribution));
   };
   fn remove_volunteer = [&](let volunteer) {
-    console::log("Usuwanie %d wolontariusza  z kolejki %s", volunteer, str(queue).get());
+    console::info("Usuwanie %d wolontariusza  z kolejki %s", volunteer, str(queue).get());
     queue.erase(std::find_if(std::begin(queue), std::end(queue), [&](var pair) {
       let [_, pair_volunteer] = pair;
       return pair_volunteer == volunteer;
@@ -108,6 +106,9 @@
           console::info("Przekroczyłem limit odmówień...");
           console::error("Sam sprzątam!");
 
+          console::info("Informuję o rozpoczęciu sprzątania...");
+          inform_volunteers_about_service_start();
+
           poet = rooms.front();
           rooms.erase(begin(rooms));
 
@@ -145,7 +146,6 @@
         console::event("%d zakończył sprzątanie", packet.source);
 
         queue.emplace_back(packet.timestamp, packet.source);
-        console::event("%d zakończył sprzątanie", packet.source);
 
         console::info("Sortowanie kolejki...");
         std::sort(std::begin(queue), std::end(queue), [&](var first, var second) {
