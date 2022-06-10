@@ -115,15 +115,6 @@ namespace poet {
       packet::receive(volunteer::action::ResponseServiceEnd);
     };
     loop {
-      console::info("Requesting room service...");
-      request_room_service();
-
-      console::info("Awaiting room service...");
-      await_room_service();
-
-      console::info("sleeping...");
-      process::sleep(1);
-
       console::info("Pętlę się...");
       process::sleep(0.5);
 
