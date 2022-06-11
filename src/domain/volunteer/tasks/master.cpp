@@ -17,11 +17,11 @@
   fn service_room = [&]() {
     process::sleep(rnd::use(cleaning_distribution));
   };
-  fn remove_volunteer = [&](let volunteer) {
-    console::info("Usuwanie %d wolontariusza  z kolejki %s", volunteer, str(queue).get());
+  fn remove_volunteer = [&](let target_volunteer) {
+    console::info("Usuwanie %d wolontariusza  z kolejki %s", target_volunteer, str(queue).get());
     queue.erase(std::find_if(std::begin(queue), std::end(queue), [&](var pair) {
       let [_, pair_volunteer] = pair;
-      return pair_volunteer == volunteer;
+      return pair_volunteer == target_volunteer;
     }));
 
   };
@@ -30,23 +30,23 @@
   var reject_count = 0;
   optional<i32> saved_volunteer;
 
-  fn inform_poet_about_service_end = [&](let poet) {
-    packet::send(poet, action::ResponseServiceEnd);
+  fn inform_poet_about_service_end = [&](let target_poet) {
+    packet::send(target_poet, volunteer::action::ResponseServiceEnd);
   };
-  fn inform_volunteer_about_service_need = [&](let volunteer, let room) {
-    packet::send(volunteer, volunteer::action::RequestService, room);
+  fn inform_volunteer_about_service_need = [&](let target_volunteer, let room) {
+    packet::send(target_volunteer, volunteer::action::RequestService, room);
   };
   fn inform_volunteers_about_service_start = [&]() {
     process::foreach_volunteer(
-      [&](var volunteer) {
-        packet::send(volunteer, action::ResponseServiceStart);
+      [&](var target_volunteer) {
+        packet::send(target_volunteer, volunteer::action::ResponseServiceStart);
       }
     );
   };
-  fn inform_volunteers_about_service_end = [&](let poet) {
+  fn inform_volunteers_about_service_end = [&](let target_poet) {
     process::foreach_volunteer(
-      [&](var volunteer) {
-        packet::send(volunteer, action::ResponseServiceEnd, poet);
+      [&](var target_volunteer) {
+        packet::send(target_volunteer, volunteer::action::ResponseServiceEnd, target_poet);
       }
     );
   };
@@ -65,12 +65,12 @@
       if (reject_count > MaxRejections) return true;
     } else reject_count = 0;
 
-    let [_, volunteer] = queue.front();
-    console::info("Zapisuje wolontariusza z początku kolejki %d", volunteer);
-    saved_volunteer.emplace(volunteer);
+    let [_, target_volunteer] = queue.front();
+    console::info("Zapisuje wolontariusza z początku kolejki %d", target_volunteer);
+    saved_volunteer.emplace(target_volunteer);
     let room = rooms.front();
-    console::info("Informuje wolontariusza %d o potrzebie posprzątania", volunteer);
-    inform_volunteer_about_service_need(volunteer, room);
+    console::info("Informuje wolontariusza %d o potrzebie posprzątania", target_volunteer);
+    inform_volunteer_about_service_need(target_volunteer, room);
     return false;
   };
 
@@ -88,8 +88,8 @@
       }
         break;
       case volunteer::action::RequestService: {
-        var poet = packet.data;
-        console::event("Zostałem poproszony o sprzątanie pokoju poety %d", poet);
+        var target_poet = packet.data;
+        console::event("Zostałem poproszony o sprzątanie pokoju poety %d", target_poet);
 
         console::info("Informuję o rozpoczęciu sprzątania...");
         inform_volunteers_about_service_start();
@@ -98,9 +98,9 @@
         service_room();
 
         console::info("Informuję o zakończeniu sprzątania...");
-        inform_volunteers_about_service_end(poet);
+        inform_volunteers_about_service_end(target_poet);
         console::info("Informuję poetę o zakończonym sprzątaniu...");
-        inform_poet_about_service_end(poet);
+        inform_poet_about_service_end(target_poet);
 
         if (reject_count > MaxRejections) {
           console::info("Przekroczyłem limit odmówień...");
@@ -109,16 +109,16 @@
           console::info("Informuję o rozpoczęciu sprzątania...");
           inform_volunteers_about_service_start();
 
-          poet = rooms.front();
+          target_poet = rooms.front();
           rooms.erase(begin(rooms));
 
           console::info("Sprzątam...");
           service_room();
 
           console::info("Informuję o zakończeniu sprzątania...");
-          inform_volunteers_about_service_end(poet);
+          inform_volunteers_about_service_end(target_poet);
           console::info("Informuję poetę o zakończonym sprzątaniu...");
-          inform_poet_about_service_end(poet);
+          inform_poet_about_service_end(target_poet);
           console::info("Pokoje do posprzątania %s", str(rooms).get());
           if (not rooms.empty()) handshake();
         }
