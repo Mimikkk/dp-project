@@ -6,4 +6,5 @@ namespace volunteer::state {
 
   fn get() -> State { return resource.value(); }
   fn change(State next) -> void { resource.update([&](var state) { *state = next; }); }
+  Resource<State> *raw() { return &resource; }
 }
