@@ -28,14 +28,14 @@ namespace poet {
     };
 
 
-    var decisions = vector<bool>({false, false, true});
+    var decisions = vector<i32>({0, 0, 1});
     fn are_drinks_and_food_present = [&]() {
       return std::all_of(std::begin(decisions), std::end(decisions), [](auto d) { return d; });
     };
 
     fn reset_state = [&]() {
       members.clear();
-      decisions = vector<bool>({false, false, true});
+      decisions = vector<i32>({0, 0, 1});
       state::change(state::Idle);
     };
 
@@ -53,7 +53,7 @@ namespace poet {
       var new_members = vector<i32>({process::Rank});
       process::foreach_poet_except_me(
         [&](var) {
-          let packet = packet::receive<bool>(action::ResponseInvite);
+          let packet = packet::receive<i32>(action::ResponseInvite);
           if (packet.data) new_members.push_back(packet.source);
         }
       );
@@ -69,7 +69,7 @@ namespace poet {
     fn inform_members_about_party = [&](bool shouldStart) {
       for (let member: members) {
         if (process::is_me(member)) continue;
-        packet::send(member, action::ResponsePartyStart, shouldStart);
+        packet::send(member, action::ResponsePartyStart, (i32) shouldStart);
       }
     };
 
@@ -83,12 +83,12 @@ namespace poet {
     fn await_members_list = [&]() -> vector<i32> {
       return packet::receive<vector<i32>>(action::ResponseMembersList).data;
     };
-    fn await_decisions_list = [&]() -> vector<bool> {
-      return packet::receive<vector<bool>>(action::ResponseDecisionsList).data;
+    fn await_decisions_list = [&]() -> vector<i32> {
+      return packet::receive<vector<i32>>(action::ResponseDecisionsList).data;
     };
 
     fn await_party_start = [&]() -> bool {
-      return packet::receive<bool>(action::ResponsePartyStart).data;
+      return packet::receive<i32>(action::ResponsePartyStart).data;
     };
 
     fn pick_item = [&]() {
@@ -135,7 +135,7 @@ namespace poet {
         console::info("Członkowie to: %s", str(members).get());
 
         let item = pick_item();
-        decisions[item] = true;
+        decisions[item] = 1;
 
         console::info("Wybrałem: %d", item);
         console::info("Decyzje to: %s", str(decisions).get());
@@ -185,7 +185,7 @@ namespace poet {
         console::info("Oczekuję na listę decyzji...");
         decisions = std::move(await_decisions_list());
         let item = pick_item();
-        decisions[item] = true;
+        decisions[item] = 1;
         console::info("Wybrałem: %d", item);
         console::info("Decyzje to: %s", str(decisions).get());
 
