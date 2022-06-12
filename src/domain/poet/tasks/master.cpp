@@ -134,6 +134,15 @@ namespace poet {
         await_invited_poets();
         console::info("Członkowie to: %s", str(members).get());
 
+        if (members.size() < 2) {
+          console::info("Impreza jest niemożliwa");
+          console::info("Informuję resztę o rozwiązaniu koła...");
+          inform_members_about_party(false);
+          console::info("Odchodzę z koła");
+          reset_state();
+          continue;
+        }
+
         let item = pick_item();
         decisions[item] = 1;
 
