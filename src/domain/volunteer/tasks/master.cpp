@@ -116,13 +116,14 @@
         break;
       case action::RequestService: {
         let volunteer = packet.source;
-        console::event("Zostałem poproszony o sprzątanie pokoju poety %d", volunteer);
+        console::event("Wolontariusz %d poprosił o posprzątanie", volunteer);
 
         if (state::get() == state::Idle) {
           requesting_poet = packet.data;
 
-          console::info("Informuję o rozpoczęciu sprzątania...");
+          console::info("Informuję wolontariuszy o rozpoczęciu sprzątania...");
           inform_volunteers_about_service_start();
+          console::info("Informuję %d o akceptacji sprzątania...");
           inform_volunteer_about_service_accept(volunteer);
 
           console::info("Sprzątam...");
@@ -164,7 +165,7 @@
             if (not rooms.empty()) handshake();
           }
           else {
-            console::info("Informuję o zakończeniu sprzątania...");
+            console::info("Informuję wolontariuszy o zakończeniu sprzątania...");
             inform_volunteers_about_service_end(timestamp);
 
             put_volunteer_back_in_queue(timestamp, volunteer);
@@ -176,7 +177,7 @@
       }
         break;
       case action::ResponseServiceAccept: {
-        console::info("Osoba zapisana akceptuje");
+        console::info("Zapisany wolontariusz zaakceptował");
         rooms.erase(begin(rooms));
         saved_volunteer.reset();
 
@@ -185,7 +186,7 @@
       }
         break;
       case action::ResponseServiceDeny: {
-        console::info("Osoba zapisana odmawia");
+        console::info("Zapisany wolontariusz odmówił");
 
         console::info("Pokoje do posprzątania %s", str(rooms).get());
         handshake();
