@@ -16,7 +16,7 @@
   let MaxRejections = 5;
   var reject_count = 0;
   optional<i32> saved_volunteer;
-  i32 requsting_poet;
+  i32 requesting_poet;
 
   fn service_room = [&]() {
     state::change(state::Servicing);
@@ -119,7 +119,7 @@
         console::event("Zostałem poproszony o sprzątanie pokoju poety %d", volunteer);
 
         if (state::get() == state::Idle) {
-          requsting_poet = packet.data;
+          requesting_poet = packet.data;
 
           console::info("Informuję o rozpoczęciu sprzątania...");
           inform_volunteers_about_service_start();
@@ -149,12 +149,12 @@
           state::change(state::Idle);
 
           console::info("Informuję poetę o zakończonym sprzątaniu...");
-          inform_poet_about_service_end(requsting_poet);
+          inform_poet_about_service_end(requesting_poet);
 
           if (reject_count > MaxRejections) {
             console::info("Przekroczyłem limit odmówień...");
 
-            requsting_poet = rooms.front();
+            requesting_poet = rooms.front();
             rooms.erase(begin(rooms));
 
             console::info("Sprzątam...");
