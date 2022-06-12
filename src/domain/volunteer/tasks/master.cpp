@@ -16,42 +16,42 @@
   let MaxRejections = 5;
   var reject_count = 0;
   optional<i32> saved_volunteer;
-  i32 target_poet;
+  i32 requsting_poet;
 
   fn service_room = [&]() {
     state::change(state::Servicing);
     state::raw()->signal();
   };
 
-  fn remove_volunteer = [&](let target_volunteer) {
-    console::info("Usuwanie %d wolontariusza  z kolejki %s", target_volunteer, str(queue).get());
+  fn remove_volunteer = [&](let volunteer) {
+    console::info("Usuwanie %d wolontariusza  z kolejki %s", volunteer, str(queue).get());
     queue.erase(std::find_if(std::begin(queue), std::end(queue), [&](var pair) {
       let [_, pair_volunteer] = pair;
-      return pair_volunteer == target_volunteer;
+      return pair_volunteer == volunteer;
     }));
 
   };
 
-  fn inform_poet_about_service_end = [&](let target_poet) {
-    packet::send(target_poet, volunteer::action::ResponseServiceEnd);
+  fn inform_poet_about_service_end = [&](let poet) {
+    packet::send(poet, action::ResponseServiceEnd);
   };
 
-  fn inform_volunteer_about_service_need = [&](let target_volunteer, let room) {
-    packet::send(target_volunteer, volunteer::action::RequestService, room);
+  fn inform_volunteer_about_service_need = [&](let volunteer, let room) {
+    packet::send(volunteer, action::RequestService, room);
   };
 
   fn inform_volunteers_about_service_start = [&]() {
     process::foreach_volunteer(
-      [&](var target_volunteer) {
-        packet::send(target_volunteer, volunteer::action::ResponseServiceStart);
+      [&](var volunteer) {
+        packet::send(volunteer, action::ResponseServiceStart);
       }
     );
   };
 
-  fn inform_volunteers_about_service_end = [&](let saved_timestamp) {
+  fn inform_volunteers_about_service_end = [&](let timestamp) {
     process::foreach_volunteer_except_me(
-      [&](var target_volunteer) {
-        packet::send(target_volunteer, volunteer::action::ResponseServiceEnd, saved_timestamp);
+      [&](var volunteer) {
+        packet::send(volunteer, action::ResponseServiceEnd, timestamp);
       }
     );
   };
@@ -70,19 +70,19 @@
       if (reject_count > MaxRejections) return true;
     } else reject_count = 0;
 
-    let [_, target_volunteer] = queue.front();
-    console::info("Zapisuje wolontariusza z początku kolejki %d", target_volunteer);
-    saved_volunteer.emplace(target_volunteer);
+    let [_, volunteer] = queue.front();
+    console::info("Zapisuje wolontariusza z początku kolejki %d", volunteer);
+    saved_volunteer.emplace(volunteer);
     let room = rooms.front();
-    console::info("Informuje wolontariusza %d o potrzebie posprzątania", target_volunteer);
-    inform_volunteer_about_service_need(target_volunteer, room);
+    console::info("Informuje wolontariusza %d o potrzebie posprzątania", volunteer);
+    inform_volunteer_about_service_need(volunteer, room);
     return false;
   };
 
-  fn put_volunteer_back_in_queue = [&](let target_timestamp, let target_volunteer) {
-    console::event("%d zakończył sprzątanie", target_volunteer);
+  fn put_volunteer_back_in_queue = [&](let timestamp, let volunteer) {
+    console::event("%d zakończył sprzątanie", volunteer);
 
-    queue.emplace_back(target_timestamp, target_volunteer);
+    queue.emplace_back(timestamp, volunteer);
 
     console::info("Sortowanie kolejki...");
     std::sort(std::begin(queue), std::end(queue), [&](var first, var second) {
@@ -92,12 +92,12 @@
     });
   };
 
-  fn inform_volunteer_about_service_accept = [&](let target_volunteer) {
-    packet::send(target_volunteer, volunteer::action::ResponseServiceAccept);
+  fn inform_volunteer_about_service_accept = [&](let volunteer) {
+    packet::send(volunteer, action::ResponseServiceAccept);
   };
 
-  fn inform_volunteer_about_service_deny = [&](let target_volunteer) {
-    packet::send(target_volunteer, volunteer::action::ResponseServiceDeny);
+  fn inform_volunteer_about_service_deny = [&](let volunteer) {
+    packet::send(volunteer, action::ResponseServiceDeny);
   };
 
   loop {
@@ -106,49 +106,55 @@
 
     switch (packet.tag) {
       case poet::action::RequestRoomService: {
-        console::event("Poeta %d poprosił o posprzątanie", packet.source);
-        rooms.emplace_back(packet.source);
+        let poet = packet.source;
+        console::event("Poeta %d poprosił o posprzątanie", poet);
+        rooms.emplace_back(poet);
 
         console::info("Pokoje do posprzątania %s", str(rooms).get());
         if (rooms.size() == 1) handshake();
       }
         break;
-      case volunteer::action::RequestService: {
-        console::event("Zostałem poproszony o sprzątanie pokoju poety %d", packet.data);
+      case action::RequestService: {
+        let volunteer = packet.source;
+        console::event("Zostałem poproszony o sprzątanie pokoju poety %d", volunteer);
 
         if (state::get() == state::Idle) {
-          target_poet = packet.data;
+          requsting_poet = packet.data;
 
           console::info("Informuję o rozpoczęciu sprzątania...");
           inform_volunteers_about_service_start();
-          inform_volunteer_about_service_accept(packet.source);
+          inform_volunteer_about_service_accept(volunteer);
 
           console::info("Sprzątam...");
           service_room();
         }
         else {
           console::info("Informuję o odmowie sprzątania...");
-          inform_volunteer_about_service_deny(packet.source);
+          inform_volunteer_about_service_deny(volunteer);
         }
 
       }
         break;
-      case volunteer::action::ResponseServiceStart: {
-        console::event("%d rozpoczął sprzątanie", packet.source);
-        remove_volunteer(packet.source);
+      case action::ResponseServiceStart: {
+        let volunteer = packet.source;
+        console::event("%d rozpoczął sprzątanie", volunteer);
+        remove_volunteer(volunteer);
       }
         break;
-      case volunteer::action::ResponseServiceEnd: {
-        if (process::is_me(packet.source)) {
+      case action::ResponseServiceEnd: {
+        let timestamp = packet.data;
+        let volunteer = packet.source;
+
+        if (process::is_me(volunteer)) {
           state::change(state::Idle);
 
           console::info("Informuję poetę o zakończonym sprzątaniu...");
-          inform_poet_about_service_end(target_poet);
+          inform_poet_about_service_end(requsting_poet);
 
           if (reject_count > MaxRejections) {
             console::info("Przekroczyłem limit odmówień...");
 
-            target_poet = rooms.front();
+            requsting_poet = rooms.front();
             rooms.erase(begin(rooms));
 
             console::info("Sprzątam...");
@@ -159,17 +165,17 @@
           }
           else {
             console::info("Informuję o zakończeniu sprzątania...");
-            inform_volunteers_about_service_end(packet.data);
+            inform_volunteers_about_service_end(timestamp);
 
-            put_volunteer_back_in_queue(packet.data, packet.source);
+            put_volunteer_back_in_queue(timestamp, volunteer);
           }
         }
         else {
-          put_volunteer_back_in_queue(packet.data, packet.data);
+          put_volunteer_back_in_queue(timestamp, volunteer);
         }
       }
         break;
-      case volunteer::action::ResponseServiceAccept: {
+      case action::ResponseServiceAccept: {
         console::info("Osoba zapisana akceptuje");
         rooms.erase(begin(rooms));
         saved_volunteer.reset();
@@ -178,7 +184,7 @@
         if (not rooms.empty()) handshake();
       }
         break;
-      case volunteer::action::ResponseServiceDeny: {
+      case action::ResponseServiceDeny: {
         console::info("Osoba zapisana odmawia");
 
         console::info("Pokoje do posprzątania %s", str(rooms).get());

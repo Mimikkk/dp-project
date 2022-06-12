@@ -12,6 +12,6 @@
   loop {
     state::raw()->wait();
     process::sleep(rnd::use(cleaning_distribution));
-    packet::send(process::Rank, action::ResponseServiceEnd, timestamp::current());
+    packet::send(process::Rank, action::ResponseServiceEnd);
   }
 }
