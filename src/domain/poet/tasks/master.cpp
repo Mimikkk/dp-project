@@ -11,7 +11,7 @@ namespace poet {
   [[noreturn]] fn master_task() -> void {
     let sleep_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
     let party_distribution = rnd::create_f_uniform(rnd::real(0.5, 1.0), rnd::real(1.5, 2.5));
-    let create_club_distribution = rnd::create_b_uniform(0.5);
+    let create_club_distribution = rnd::create_b_uniform(0.3);
     let item_distribution = rnd::create_i_uniform(0, 2);
     let item_leak_distribution = rnd::create_b_uniform(0.5);
     let pick_item_distribution = rnd::create_b_uniform(0.5);
@@ -92,20 +92,19 @@ namespace poet {
     };
 
     fn pick_item = [&]() {
-      i32 item;
-      loop {
-        do {
-          item = rnd::use(item_distribution);
-        } while (item == previous_item);
+      i32 option;
+      var options = vector<i32>();
+      bool d0 = decisions[0];
+      bool d1 = decisions[1];
+      bool p0 = previous_item == 0 || previous_item == 2;
+      bool p1 = previous_item == 1 || previous_item == 2;
 
-        if (not decisions[item] or are_drinks_and_food_present()) {
-          return static_cast<item::Item>(item);
-        }
+      if (!d0 && !p0 || !d0 && p1 || d1 && !p0 || d1 && p1) { options.push_back(0); }
+      if (d0 && p0 || d0 && !p1 || !d1 && p0 || !d1 && !p1) { options.push_back(1); }
+      if (d1 && p0 && !p1 || d0 && !p0 && p1 || d0 && d1 && !p0) { options.push_back(2); }
 
-        if (rnd::use(item_leak_distribution)) {
-          return static_cast<item::Item>(item);
-        }
-      }
+      option = rnd::integer(0, -1 + static_cast<i32>(options.size()));
+      return static_cast<item::Item>(options[option]);
     };
 
     fn request_room_service = [&]() {
