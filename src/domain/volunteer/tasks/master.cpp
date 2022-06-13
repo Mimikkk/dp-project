@@ -24,7 +24,7 @@
   };
 
   fn remove_volunteer = [&](let volunteer) {
-    console::info("Usuwanie %d wolontariusza  z kolejki %s", volunteer, str(queue).get());
+    console::info("Usuwanie wolontariusza %d z kolejki %s", volunteer, str(queue).get());
     queue.erase(std::find_if(std::begin(queue), std::end(queue), [&](var pair) {
       let [_, pair_volunteer] = pair;
       return pair_volunteer == volunteer;
@@ -69,6 +69,11 @@
       ++reject_count;
       if (reject_count > MaxRejections) return true;
     } else reject_count = 0;
+
+    if (queue.empty()) {
+      console::info("Wszyscy wolontariusze są zajęci");
+      return true;
+    }
 
     let [_, volunteer] = queue.front();
     console::info("Zapisuje wolontariusza %d z początku kolejki", volunteer);
@@ -155,6 +160,7 @@
 
           if (reject_count > MaxRejections) {
             console::info("Przekroczyłem limit odmówień...");
+            reject_count = 0;
 
             requesting_poet = rooms.front();
             rooms.erase(begin(rooms));
@@ -170,10 +176,12 @@
             inform_volunteers_about_service_end(timestamp);
 
             put_volunteer_back_in_queue(timestamp, volunteer);
+            if (queue.size() == 1 and !rooms.empty()) handshake();
           }
         }
         else {
           put_volunteer_back_in_queue(timestamp, volunteer);
+          if (queue.size() == 1 and !rooms.empty() and reject_count <= MaxRejections and !saved_volunteer.has_value()) handshake();
         }
       }
         break;
