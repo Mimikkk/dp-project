@@ -57,9 +57,9 @@
   };
 
   fn handshake = [&]() -> bool {
-    console::info("Kolejka %s", str(queue).get());
-    console::info("Liczba odmówień %d", reject_count);
-    console::info("Zapisany wolontariusz to %s",
+    console::info("Kolejka to: %s", str(queue).get());
+    console::info("Liczba odmówień to: %d", reject_count);
+    console::info("Zapisany wolontariusz to: %s",
                   saved_volunteer.has_value()
                   ? str("%d", saved_volunteer.value()).get()
                   : "żaden");
@@ -71,7 +71,7 @@
     } else reject_count = 0;
 
     let [_, volunteer] = queue.front();
-    console::info("Zapisuje wolontariusza z początku kolejki %d", volunteer);
+    console::info("Zapisuje wolontariusza %d z początku kolejki", volunteer);
     saved_volunteer.emplace(volunteer);
     let room = rooms.front();
     console::info("Informuje wolontariusza %d o potrzebie posprzątania", volunteer);
@@ -80,7 +80,7 @@
   };
 
   fn put_volunteer_back_in_queue = [&](let timestamp, let volunteer) {
-    console::event("%d zakończył sprzątanie", volunteer);
+    console::event("Wolontariusz %d zakończył sprzątanie", volunteer);
 
     queue.emplace_back(timestamp, volunteer);
 
@@ -110,7 +110,7 @@
         console::event("Poeta %d poprosił o posprzątanie", poet);
         rooms.emplace_back(poet);
 
-        console::info("Pokoje do posprzątania %s", str(rooms).get());
+        console::info("Pokoje do posprzątania to: %s", str(rooms).get());
         if (rooms.size() == 1) handshake();
       }
         break;
@@ -123,14 +123,15 @@
 
           console::info("Informuję wolontariuszy o rozpoczęciu sprzątania...");
           inform_volunteers_about_service_start();
-          console::info("Informuję %d o akceptacji sprzątania...");
+
+          console::info("Informuję wolontariusza %d o akceptacji sprzątania...", volunteer);
           inform_volunteer_about_service_accept(volunteer);
 
           console::info("Sprzątam...");
           service_room();
         }
         else {
-          console::info("Informuję o odmowie sprzątania...");
+          console::info("Informuję wolontariusza %d o odmowie sprzątania...", volunteer);
           inform_volunteer_about_service_deny(volunteer);
         }
 
@@ -138,7 +139,7 @@
         break;
       case action::ResponseServiceStart: {
         let volunteer = packet.source;
-        console::event("%d rozpoczął sprzątanie", volunteer);
+        console::event("Wolontariusz %d rozpoczął sprzątanie", volunteer);
         remove_volunteer(volunteer);
       }
         break;
@@ -149,7 +150,7 @@
         if (process::is_me(volunteer)) {
           state::change(state::Idle);
 
-          console::info("Informuję poetę o zakończonym sprzątaniu...");
+          console::info("Informuję poetę %d o zakończonym sprzątaniu...", requesting_poet);
           inform_poet_about_service_end(requesting_poet);
 
           if (reject_count > MaxRejections) {
@@ -161,11 +162,11 @@
             console::info("Sprzątam...");
             service_room();
 
-            console::info("Pokoje do posprzątania %s", str(rooms).get());
+            console::info("Pokoje do posprzątania to: %s", str(rooms).get());
             if (not rooms.empty()) handshake();
           }
           else {
-            console::info("Informuję wolontariuszy o zakończeniu sprzątania...");
+            console::info("Informuję resztę wolontariuszy o zakończeniu sprzątania...");
             inform_volunteers_about_service_end(timestamp);
 
             put_volunteer_back_in_queue(timestamp, volunteer);
@@ -181,14 +182,14 @@
         rooms.erase(begin(rooms));
         saved_volunteer.reset();
 
-        console::info("Pokoje do posprzątania %s", str(rooms).get());
+        console::info("Pokoje do posprzątania to: %s", str(rooms).get());
         if (not rooms.empty()) handshake();
       }
         break;
       case action::ResponseServiceDeny: {
         console::info("Zapisany wolontariusz odmówił");
 
-        console::info("Pokoje do posprzątania %s", str(rooms).get());
+        console::info("Pokoje do posprzątania to: %s", str(rooms).get());
         handshake();
       }
         break;
