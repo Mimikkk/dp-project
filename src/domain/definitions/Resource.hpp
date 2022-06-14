@@ -5,6 +5,7 @@ template<typename T>
 class Resource {
 private:
   pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+  pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
   T _value;
 
 public:
@@ -28,6 +29,16 @@ public:
   }
   fn unlock() {
     pthread_mutex_unlock(&mutex);
+  }
+  fn wait() {
+    lock();
+    pthread_cond_wait(&cond, &mutex);
+    unlock();
+  }
+  fn signal() {
+    lock();
+    pthread_cond_signal(&cond);
+    unlock();
   }
   fn set(T value) {
     _value = value;
