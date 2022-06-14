@@ -151,6 +151,7 @@
       case action::ResponseServiceEnd: {
         let timestamp = packet.data;
         let volunteer = packet.source;
+        console::event("Zakończenie serwisu przez %d", volunteer);
 
         if (process::is_me(volunteer)) {
           state::change(state::Idle);
@@ -186,7 +187,7 @@
       }
         break;
       case action::ResponseServiceAccept: {
-        console::info("Zapisany wolontariusz zaakceptował");
+        console::event("Zapisany wolontariusz zaakceptował");
         rooms.erase(begin(rooms));
         saved_volunteer.reset();
 
@@ -195,7 +196,7 @@
       }
         break;
       case action::ResponseServiceDeny: {
-        console::info("Zapisany wolontariusz odmówił");
+        console::event("Zapisany wolontariusz odmówił");
 
         console::info("Pokoje do posprzątania to: %s", str(rooms).get());
         handshake();

@@ -10,7 +10,7 @@ namespace poet {
 
     loop {
       let packet = packet::receive(action::RequestInvite);
-
+      
       state::raw()->update([&](var state) {
         if (state::get() == state::Member or not rnd::use(join_invite_distribution)) {
           packet::send(packet.source, action::ResponseInvite, (i32) false);
